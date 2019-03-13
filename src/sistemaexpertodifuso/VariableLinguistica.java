@@ -4,14 +4,14 @@ import java.util.Scanner;
 
 class VariableLinguistica {
     int llave;
-    String predicadosNegados[];
-    String predicado;
+    String nombre;
+    Conjunto[] conjuntos;
 
     public VariableLinguistica(){
-        predicadosNegados = new String[16];
+        conjuntos = new Conjunto[8];
     }
     
-    public void leeClausula(){
+    /*public void leeClausula(){
         int predicados = 0;
         boolean leerMas = true;
         Scanner sc = new Scanner(System.in);
@@ -92,5 +92,9 @@ class VariableLinguistica {
             clausula += this.predicado.trim();
         }
         return clausula;
+    }*/
+
+    String muestraVariableLinguistica() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
