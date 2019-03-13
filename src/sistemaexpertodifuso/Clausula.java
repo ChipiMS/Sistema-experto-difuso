@@ -1,4 +1,4 @@
-package sistemaexperto;
+package sistemaexpertodifuso;
 
 import java.util.Scanner;
 

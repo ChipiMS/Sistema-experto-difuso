@@ -1,4 +1,4 @@
-package sistemaexperto;
+package sistemaexpertodifuso;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,7 +17,7 @@ public class FormularioClausula extends JDialog{
     JTextField predicadosNegados[];
     JTextField predicadoNoNegado;
 
-    public FormularioClausula(Clausula clausula, BaseDeConocimientos baseDeConocimientos, boolean actualiza){
+    public FormularioClausula(Clausula clausula, ConjuntosDifusos baseDeConocimientos, boolean actualiza){
         setLayout(new FlowLayout());
         int i;
         String predicado;

@@ -1,4 +1,4 @@
-package sistemaexperto;
+package sistemaexpertodifuso;
 class Arbol {
     Nodo raiz = null;
     boolean borrar(int llave){

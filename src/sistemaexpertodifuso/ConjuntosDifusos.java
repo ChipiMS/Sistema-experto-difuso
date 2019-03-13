@@ -1,4 +1,4 @@
-package sistemaexperto;
+package sistemaexpertodifuso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,12 +7,12 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-public class BaseDeConocimientos{
+public class ConjuntosDifusos{
     private final int registerLength;
     private Arbol arbol;
     private int direccionSiguiente, direccionActual, borrados, desbordados, ordenados, direccionReorganizados;
     private Indice indice;
-    BaseDeConocimientos() throws IOException, FileNotFoundException, ClassNotFoundException {
+    ConjuntosDifusos() throws IOException, FileNotFoundException, ClassNotFoundException {
         registerLength = 1024;
         indice = new Indice();
         recuperarArbol();

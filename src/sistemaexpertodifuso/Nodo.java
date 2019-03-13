@@ -1,4 +1,4 @@
-package sistemaexperto;
+package sistemaexpertodifuso;
 public class Nodo {
     int llave, direccion;
     Nodo derecha, izquierda;
