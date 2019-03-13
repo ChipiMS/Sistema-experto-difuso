@@ -19,7 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class GUI extends JFrame {
-    ConjuntosDifusos conjuntosDifusos;
+    VariablesLinguisticas variablesLinguisticas;
     JTextArea messages;
     JPanel panelHechos;
     /*
@@ -28,8 +28,8 @@ public class GUI extends JFrame {
     | |  _| | | || | 
     | |_| | |_| || | 
      \____|\___/|___|*/
-    GUI(ConjuntosDifusos conjuntosDifusos) throws IOException {
-        this.conjuntosDifusos = conjuntosDifusos;
+    GUI(VariablesLinguisticas variablesLinguisticas) throws IOException {
+        this.variablesLinguisticas = variablesLinguisticas;
         Container cp = getContentPane();
         setSize(600, 600);
         setTitle("Sistema experto difuso");
@@ -62,23 +62,23 @@ public class GUI extends JFrame {
     |_|  |_|\___|_| |_|\__,_|*/
     JMenuBar createMenu(Container cp) throws IOException {
         JMenuBar menuBar;
-        JMenu menuConjuntosDifusos;
+        JMenu menuVariablesLinguisticas;
         JMenuItem menuItemClausula;
         menuBar = new JMenuBar();
         
-        menuConjuntosDifusos = new JMenu("Conjuntos difusos");
-        menuBar.add(menuConjuntosDifusos);
+        menuVariablesLinguisticas = new JMenu("Variables lingüisticas");
+        menuBar.add(menuVariablesLinguisticas);
         
-        //Conjuntos difusos-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        menuItemClausula = new JMenuItem("Mostrar los conjuntos");
+        //Variables lingüisticas-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        menuItemClausula = new JMenuItem("Mostrar las variables lingüisticas");
         menuItemClausula.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Clausula clausulas[] = null;
+                VariableLinguistica clausulas[] = null;
                 int i;
                 String reglas = "";
                 try {
-                    clausulas = conjuntosDifusos.recuperarSecuencial();
+                    clausulas = variablesLinguisticas.recuperarSecuencial();
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -87,64 +87,64 @@ public class GUI extends JFrame {
                         reglas += clausulas[i].muestraClausula() + "\n";
                     }
                 } else {
-                    reglas = "Hubo un error al recuperar los conjuntos.";
+                    reglas = "Hubo un error al recuperar las variables lingüisticas.";
                 }
                 JOptionPane.showMessageDialog(cp, reglas);
             }
         });
-        menuConjuntosDifusos.add(menuItemClausula);
+        menuVariablesLinguisticas.add(menuItemClausula);
 
-        menuItemClausula = new JMenuItem("Actualizar conjuntos");
+        menuItemClausula = new JMenuItem("Actualizar variable lingüistica");
         menuItemClausula.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 try {
-                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de los conjuntos a actualizar:", JOptionPane.INPUT_VALUE_PROPERTY));
-                    Clausula clausula = conjuntosDifusos.recuperarAleatorio(llave);
+                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable lingüistica a actualizar:", JOptionPane.INPUT_VALUE_PROPERTY));
+                    VariableLinguistica clausula = variablesLinguisticas.recuperarAleatorio(llave);
                     if (clausula != null) {
-                        new FormularioClausula(clausula, conjuntosDifusos, true);
+                        new FormularioVariablesLinguisticas(clausula, variablesLinguisticas, true);
                     } else {
-                        JOptionPane.showMessageDialog(cp, "No existen unos conjuntos con esa llave.");
+                        JOptionPane.showMessageDialog(cp, "No existen una las variable lingüistica con esa llave.");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
-        menuConjuntosDifusos.add(menuItemClausula);
+        menuVariablesLinguisticas.add(menuItemClausula);
 
-        menuItemClausula = new JMenuItem("Nuevos conjuntos");
+        menuItemClausula = new JMenuItem("Nueva variable lingüistica");
         menuItemClausula.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 try {
-                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de los nuevos conjuntos", JOptionPane.INPUT_VALUE_PROPERTY));
-                    Clausula clausula = conjuntosDifusos.recuperarAleatorio(llave);
+                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la la nueva variable lingüistica", JOptionPane.INPUT_VALUE_PROPERTY));
+                    VariableLinguistica clausula = variablesLinguisticas.recuperarAleatorio(llave);
                     if (clausula == null) {
-                        clausula = new Clausula();
+                        clausula = new VariableLinguistica();
                         clausula.llave = llave;
-                        new FormularioClausula(clausula, conjuntosDifusos, false);
+                        new FormularioVariablesLinguisticas(clausula, variablesLinguisticas, false);
                     } else {
-                        JOptionPane.showMessageDialog(cp, "Ya existen unos conjuntos con esa llave.");
+                        JOptionPane.showMessageDialog(cp, "Ya existen una variable lingüistica con esa llave.");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
-        menuConjuntosDifusos.add(menuItemClausula);
+        menuVariablesLinguisticas.add(menuItemClausula);
 
-        menuItemClausula = new JMenuItem("Borrar conjuntos");
+        menuItemClausula = new JMenuItem("Borrar variable lingüistica");
         menuItemClausula.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 try {
-                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de los conjuntos que se van a borrar", JOptionPane.INPUT_VALUE_PROPERTY));
-                    Clausula clausula = conjuntosDifusos.recuperarAleatorio(llave);
+                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable lingüistica que se va a borrar", JOptionPane.INPUT_VALUE_PROPERTY));
+                    VariableLinguistica clausula = variablesLinguisticas.recuperarAleatorio(llave);
                     if (clausula != null) {
-                        conjuntosDifusos.borrar(llave);
+                        variablesLinguisticas.borrar(llave);
                     } else {
-                        JOptionPane.showMessageDialog(cp, "No existen unos conjuntos con esa llave.");
+                        JOptionPane.showMessageDialog(cp, "No existen una variable lingüistica con esa llave.");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -153,7 +153,7 @@ public class GUI extends JFrame {
                 }
             }
         });
-        menuConjuntosDifusos.add(menuItemClausula);
+        menuVariablesLinguisticas.add(menuItemClausula);
 
         return menuBar;
     }

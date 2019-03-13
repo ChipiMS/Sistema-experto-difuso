@@ -7,18 +7,18 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-public class ConjuntosDifusos{
+public class VariablesLinguisticas{
     private final int registerLength;
     private Arbol arbol;
     private int direccionSiguiente, direccionActual, borrados, desbordados, ordenados, direccionReorganizados;
     private Indice indice;
-    ConjuntosDifusos() throws IOException, FileNotFoundException, ClassNotFoundException {
+    VariablesLinguisticas() throws IOException, FileNotFoundException, ClassNotFoundException {
         registerLength = 1024;
         indice = new Indice();
         recuperarArbol();
         recuperarControl();
     }
-    public void actualizar(Clausula clausula) throws FileNotFoundException, IOException{
+    public void actualizar(VariableLinguistica clausula) throws FileNotFoundException, IOException{
         RandomAccessFile escritor;
         clausula.llave = indice.llave;
         indice.direccion = arbol.buscar(indice.llave);
@@ -34,7 +34,7 @@ public class ConjuntosDifusos{
     }
     public void borrar(int llave) throws FileNotFoundException, IOException, ClassNotFoundException{
         RandomAccessFile escritor;
-        Clausula clausula = new Clausula();
+        VariableLinguistica clausula = new VariableLinguistica();
         indice.llave = clausula.llave = llave;
         indice.direccion = arbol.buscar(indice.llave);
         if(indice.direccion == -1){
@@ -58,7 +58,7 @@ public class ConjuntosDifusos{
         raf.writeInt(aEscribir.llave);
         raf.writeInt(aEscribir.direccion);
     }
-    private void escribeClausula(Clausula aEscribir, RandomAccessFile raf) throws IOException{
+    private void escribeClausula(VariableLinguistica aEscribir, RandomAccessFile raf) throws IOException{
         int i;
         raf.writeInt(aEscribir.llave);
         for(i = 0; i < 16; i++){
@@ -69,7 +69,7 @@ public class ConjuntosDifusos{
         }
         raf.writeChars(aEscribir.predicado);
     }
-    public void insertar(Clausula clausula) throws IOException{
+    public void insertar(VariableLinguistica clausula) throws IOException{
         boolean existe = true;
         RandomAccessFile lector = null, escritorIndice, escritor;
         indice.llave = clausula.llave;
@@ -134,8 +134,8 @@ public class ConjuntosDifusos{
             lector.close();
         }
     }
-    private void recorreArbol(Nodo nodo, RandomAccessFile raf, ArrayList<Clausula> arreglo) throws IOException{
-        Clausula clausula;
+    private void recorreArbol(Nodo nodo, RandomAccessFile raf, ArrayList<VariableLinguistica> arreglo) throws IOException{
+        VariableLinguistica clausula;
         if(nodo.izquierda != null){
             recorreArbol(nodo.izquierda, raf, arreglo);
         }
@@ -151,7 +151,7 @@ public class ConjuntosDifusos{
         }
     }
     private void recorreArbolReestructurar(Nodo nodo, RandomAccessFile lector, RandomAccessFile escritor) throws IOException{
-        Clausula clausula;
+        VariableLinguistica clausula;
         if(nodo.izquierda != null){
             recorreArbolReestructurar(nodo.izquierda, lector, escritor);
         }
@@ -168,8 +168,8 @@ public class ConjuntosDifusos{
             recorreArbolReestructurar(nodo.derecha, lector, escritor);
         }
     }
-    public Clausula recuperarAleatorio(int llave) throws FileNotFoundException, IOException{
-        Clausula clausula = null;
+    public VariableLinguistica recuperarAleatorio(int llave) throws FileNotFoundException, IOException{
+        VariableLinguistica clausula = null;
         RandomAccessFile lector = null;
         indice.llave = llave;
         indice.direccion = arbol.buscar(indice.llave);
@@ -230,10 +230,10 @@ public class ConjuntosDifusos{
         i.direccion = raf.readInt();
         return i;
     }
-    private Clausula recuperaClausula(RandomAccessFile lector) throws IOException{
+    private VariableLinguistica recuperaClausula(RandomAccessFile lector) throws IOException{
         int i, c;
         char premisa[] = new char[30];
-        Clausula l = new Clausula();
+        VariableLinguistica l = new VariableLinguistica();
         l.llave = lector.readInt();
         for(i = 0; i < 16; i++){
             for(c = 0; c < premisa.length; c++){
@@ -247,12 +247,12 @@ public class ConjuntosDifusos{
         l.predicado = new String(premisa).replace('\0', ' ');
         return l;
     }
-    public Clausula[] recuperarSecuencial() throws FileNotFoundException, IOException{
-        Clausula[] clausulas;
+    public VariableLinguistica[] recuperarSecuencial() throws FileNotFoundException, IOException{
+        VariableLinguistica[] clausulas;
         boolean existe = true;
         RandomAccessFile lector = null;
         direccionActual = 0;
-        ArrayList<Clausula> arreglo = new ArrayList<Clausula>();
+        ArrayList<VariableLinguistica> arreglo = new ArrayList<VariableLinguistica>();
         try{
             lector = new RandomAccessFile("maestroClausula", "r");
         }
@@ -265,7 +265,7 @@ public class ConjuntosDifusos{
             }
             lector.close();
         }
-        clausulas = new Clausula[arreglo.size()];
+        clausulas = new VariableLinguistica[arreglo.size()];
         for(int i = 0; i < arreglo.size(); i++){
             clausulas[i] = arreglo.get(i);
         }

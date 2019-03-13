@@ -3,9 +3,9 @@ package sistemaexpertodifuso;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class SistemaExperto {
+public class SistemaExpertoDifuso {
     public static void main(String[] args) throws IOException, FileNotFoundException, ClassNotFoundException {
-        ConjuntosDifusos conjuntosDifusos = new ConjuntosDifusos();
-        new GUI(conjuntosDifusos);
+        VariablesLinguisticas variablesLinguisticas = new VariablesLinguisticas();
+        new GUI(variablesLinguisticas);
     }
 }

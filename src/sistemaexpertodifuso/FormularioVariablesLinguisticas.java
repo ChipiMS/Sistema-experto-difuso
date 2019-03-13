@@ -12,12 +12,12 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-public class FormularioClausula extends JDialog{
+public class FormularioVariablesLinguisticas extends JDialog{
     JButton button;
     JTextField predicadosNegados[];
     JTextField predicadoNoNegado;
 
-    public FormularioClausula(Clausula clausula, ConjuntosDifusos baseDeConocimientos, boolean actualiza){
+    public FormularioVariablesLinguisticas(VariableLinguistica clausula, VariablesLinguisticas baseDeConocimientos, boolean actualiza){
         setLayout(new FlowLayout());
         int i;
         String predicado;
@@ -68,7 +68,7 @@ public class FormularioClausula extends JDialog{
                     }
                     dispose();
                 } catch (IOException ex) {
-                    Logger.getLogger(FormularioClausula.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(FormularioVariablesLinguisticas.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });

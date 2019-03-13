@@ -2,12 +2,12 @@ package sistemaexpertodifuso;
 
 import java.util.Scanner;
 
-class Clausula {
+class VariableLinguistica {
     int llave;
     String predicadosNegados[];
     String predicado;
 
-    public Clausula(){
+    public VariableLinguistica(){
         predicadosNegados = new String[16];
     }
     
