@@ -125,23 +125,23 @@ public class GUI extends JFrame {
                         dialog.setVisible(true);
                         valor_de_entrada = slider.getValue();
 
-                        System.out.println("Variable linguistica a evaluar:" + variable.nombre);
-                        System.out.println("Valor de entrada:" + valor_de_entrada);
-                        System.out.println("-----------------------------------------");
+                        messages.append("Variable linguistica a evaluar:" + variable.nombre+"\n");
+                        messages.append("Valor de entrada:" + valor_de_entrada+"\n");
+                        messages.append("-----------------------------------------\n");
                        
                         for (int i = 0; i < 8; i++) {
                             if (variable.conjuntos[i] != null) {
                                 
-                                System.out.println("Nombre: " + variable.conjuntos[i].nombre);
-                                System.out.println("Puntos Criticos:");
+                                messages.append("Nombre: " + variable.conjuntos[i].nombre+"\n");
+                                messages.append("Puntos Criticos:\n");
                                 for (int j = 0; j < 4; j++) {
                                     if (variable.conjuntos[i].puntosCriticos[j] != null && variable.conjuntos[i].puntosCriticos[j].y != -1) {
-                                        System.out.println(variable.conjuntos[i].puntosCriticos[j].x + "," + variable.conjuntos[i].puntosCriticos[j].y) ;
+                                        messages.append(variable.conjuntos[i].puntosCriticos[j].x + "," + variable.conjuntos[i].puntosCriticos[j].y+"\n");
                                     }
                                 }
-                                 System.out.println("Grado de membresia: " + variable.conjuntos[i].evaluar((double)(valor_de_entrada))); 
-                                 System.out.println("");
-                                 System.out.println("------------------------------------------------------");
+                                 messages.append("Grado de membresia: " + variable.conjuntos[i].evaluar((double)(valor_de_entrada))+"\n"); 
+                                 messages.append("\n");
+                                 messages.append("------------------------------------------------------\n");
                             }
                         }
                     } else {
