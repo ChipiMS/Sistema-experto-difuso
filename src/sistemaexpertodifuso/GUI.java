@@ -125,7 +125,7 @@ public class GUI extends JFrame {
                         dialog.setVisible(true);
                         valor_de_entrada = slider.getValue();
 
-                        messages.append("Variable linguistica a evaluar:" + variable.nombre+"\n");
+                        messages.append("\nVariable linguistica a evaluar:" + variable.nombre+"\n");
                         messages.append("Valor de entrada:" + valor_de_entrada+"\n");
                         messages.append("-----------------------------------------\n");
                        
