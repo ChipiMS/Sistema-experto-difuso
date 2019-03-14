@@ -9,19 +9,28 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.event.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
 
 public class GUI extends JFrame {
+
     VariablesLinguisticas variablesLinguisticas;
     JTextArea messages;
     JPanel panelHechos;
+    static JLabel valor;
+
     /*
       ____ _   _ ___ 
      / ___| | | |_ _|
@@ -63,14 +72,18 @@ public class GUI extends JFrame {
     JMenuBar createMenu(Container cp) throws IOException {
         JMenuBar menuBar;
         JMenu menuVariablesLinguisticas;
-        JMenuItem menuItem;
+        JMenu menuFuzzy;
+        JMenuItem menuItem, menuItemVL;
         menuBar = new JMenuBar();
-        
         menuVariablesLinguisticas = new JMenu("Variables lingüisticas");
+        menuFuzzy = new JMenu("Difuzificar");
         menuBar.add(menuVariablesLinguisticas);
-        
+        menuBar.add(menuFuzzy);
+
         //Variables lingüisticas-------------------------------------------------------------------------------------------------------------------------------------------------------------------
         menuItem = new JMenuItem("Mostrar las variables lingüisticas");
+        menuItemVL = new JMenuItem("Evaluar variable lingüistica");
+
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -92,7 +105,38 @@ public class GUI extends JFrame {
                 JOptionPane.showMessageDialog(cp, reglas);
             }
         });
+
+        menuItemVL.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    valor = new JLabel("");
+                    int valor_de_entrada = 0;
+                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "LLave de la variable linguistica a evaluar:", JOptionPane.INPUT_VALUE_PROPERTY));
+                    VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
+                    if (variable != null) {
+                        JOptionPane optionPane = new JOptionPane();
+
+                        JSlider slider = getSlider(optionPane);
+                        optionPane.setMessage(new Object[]{"Ingresa el valor a evaluar:", slider});
+                        optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+                        optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
+                        optionPane.add(valor);
+                        JDialog dialog = optionPane.createDialog(cp, "Difuzificar (Nombre de la variable)");
+                        dialog.setVisible(true);
+                        valor_de_entrada = (Integer) optionPane.getInputValue();
+                        messages.setText("" + valor_de_entrada);
+                    } else {
+                        JOptionPane.showMessageDialog(cp, "No existe una variable lingüistica con esa llave.");
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
         menuVariablesLinguisticas.add(menuItem);
+        menuFuzzy.add(menuItemVL);
 
         menuItem = new JMenuItem("Actualizar variable lingüistica");
         menuItem.addActionListener(new ActionListener() {
@@ -156,5 +200,23 @@ public class GUI extends JFrame {
         menuVariablesLinguisticas.add(menuItem);
 
         return menuBar;
+    }
+
+    static JSlider getSlider(final JOptionPane optionPane) {
+        JSlider slider = new JSlider();
+        slider.setMajorTickSpacing(10);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        ChangeListener changeListener = new ChangeListener() {
+            public void stateChanged(ChangeEvent changeEvent) {
+                JSlider theSlider = (JSlider) changeEvent.getSource();
+                if (!theSlider.getValueIsAdjusting()) {
+                    optionPane.setInputValue(new Integer(theSlider.getValue()));
+                    valor.setText("" + theSlider.getValue());
+                }
+            }
+        };
+        slider.addChangeListener((javax.swing.event.ChangeListener) changeListener);
+        return slider;
     }
 }
