@@ -24,9 +24,13 @@ class Conjunto{
     		Punto segundo = puntosCriticos[i + 1];
     		
 			if (!primer.esVacio() && !segundo.esVacio() && primer.x >= x && segundo.x <= x) {
-				return evaluarRecta(primer, segundo, x);
+			
+                            return evaluarRecta(primer, segundo, x);
+                                
 			}
+                        
 		}
+       
     	
     	return 0.0;
     }

@@ -124,8 +124,31 @@ public class GUI extends JFrame {
                         optionPane.add(valor);
                         JDialog dialog = optionPane.createDialog(cp, "Difuzificar:" + variable.nombre);
                         dialog.setVisible(true);
-                        valor_de_entrada = (Integer) optionPane.getInputValue();
-                        messages.setText("" + valor_de_entrada);
+                        valor_de_entrada = (int) optionPane.getInputValue();
+
+                        System.out.println("Variable linguistica a evaluar:" + variable.nombre);
+                        System.out.println("Valor de entrada:" + valor_de_entrada);
+                        System.out.println("-----------------------------------------");
+                        Conjunto objCon =  new Conjunto(true);
+                       
+                        for (int i = 0; i < 8; i++) {
+                            if (variable.conjuntos[i] != null) {
+                                
+                                System.out.println("Nombre: " + variable.conjuntos[i].nombre);
+                                System.out.println("Puntos Criticos:");
+                                for (int j = 0; j < 4; j++) {
+                                    if (variable.conjuntos[i].puntosCriticos[j] != null && variable.conjuntos[i].puntosCriticos[j].y != -1) {
+                                        System.out.println(variable.conjuntos[i].puntosCriticos[j].x + "," + variable.conjuntos[i].puntosCriticos[j].y) ;
+                                        objCon.puntosCriticos[i].x = variable.conjuntos[i].puntosCriticos[j].x;
+                                        objCon.puntosCriticos[i].y = variable.conjuntos[i].puntosCriticos[j].y;
+                                                                           
+                                    }
+                                }
+                                 System.out.println("Grado de membresia: " + objCon.evaluar((double)(valor_de_entrada))); 
+                                 System.out.println("");
+                                 System.out.println("------------------------------------------------------");
+                            }
+                        }
                     } else {
                         JOptionPane.showMessageDialog(cp, "No existe una variable lingüistica con esa llave.");
                     }
