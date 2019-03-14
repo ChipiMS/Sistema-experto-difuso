@@ -13,40 +13,43 @@ public class VariablesLinguisticas{
     private int direccionSiguiente, direccionActual, borrados, desbordados, ordenados, direccionReorganizados;
     private Indice indice;
     VariablesLinguisticas() throws IOException, FileNotFoundException, ClassNotFoundException {
-        registerLength = 1024;
+        registerLength = 936;
         indice = new Indice();
         recuperarArbol();
         recuperarControl();
     }
-    public void actualizar(VariableLinguistica clausula) throws FileNotFoundException, IOException{
+    public void actualizar(VariableLinguistica variableLinguistica) throws FileNotFoundException, IOException{
         RandomAccessFile escritor;
-        clausula.llave = indice.llave;
+        variableLinguistica.llave = indice.llave;
         indice.direccion = arbol.buscar(indice.llave);
         if(indice.direccion == -1){
-            JOptionPane.showMessageDialog(null, "No hay una clausula con la llave "+indice.llave);
+            JOptionPane.showMessageDialog(null, "No hay una variable linguistica con la llave "+indice.llave);
         }
         else{
-            escritor = new RandomAccessFile("maestroClausula", "rw");
+            escritor = new RandomAccessFile("maestroVariableLinguistica", "rw");
             escritor.seek(indice.direccion*registerLength);
-            escribeClausula(clausula, escritor);
+            escribeVariableLinguistica(variableLinguistica, escritor);
             escritor.close();
         }
     }
     public void borrar(int llave) throws FileNotFoundException, IOException, ClassNotFoundException{
+        int i;
         RandomAccessFile escritor;
-        VariableLinguistica clausula = new VariableLinguistica();
-        indice.llave = clausula.llave = llave;
+        VariableLinguistica variableLinguistica = new VariableLinguistica();
+        indice.llave = variableLinguistica.llave = llave;
         indice.direccion = arbol.buscar(indice.llave);
         if(indice.direccion == -1){
-            JOptionPane.showMessageDialog(null, "No hay una clausula con la llave "+indice.llave);
+            JOptionPane.showMessageDialog(null, "No hay una variable linguistica con la llave "+indice.llave);
         }
         else{
-            clausula.llave = 0;
-            clausula.predicadosNegados[0] = "******************************";
-            clausula.predicado = "******************************";
-            escritor = new RandomAccessFile("maestroClausula", "rw");
+            variableLinguistica.llave = 0;
+            variableLinguistica.nombre = null;
+            for(i = 0; i < 8; i++){
+                variableLinguistica.conjuntos[i] = null;
+            }
+            escritor = new RandomAccessFile("maestroVariableLinguistica", "rw");
             escritor.seek(indice.direccion*registerLength);
-            escribeClausula(clausula, escritor);
+            escribeVariableLinguistica(variableLinguistica, escritor);
             escritor.close();
             marcarIndice(indice.llave);
             arbol.borrar(llave);
@@ -58,54 +61,78 @@ public class VariablesLinguisticas{
         raf.writeInt(aEscribir.llave);
         raf.writeInt(aEscribir.direccion);
     }
-    private void escribeClausula(VariableLinguistica aEscribir, RandomAccessFile raf) throws IOException{
-        int i;
+    private void escribeVariableLinguistica(VariableLinguistica aEscribir, RandomAccessFile raf) throws IOException{
+        int i, j;
+        String nombre;
         raf.writeInt(aEscribir.llave);
-        for(i = 0; i < 16; i++){
-            if(aEscribir.predicadosNegados[i] == null){
-                aEscribir.predicadosNegados[i] = "******************************";
-            }
-            raf.writeChars(aEscribir.predicadosNegados[i]);
+        if(aEscribir.nombre == null){
+            nombre = "";
         }
-        raf.writeChars(aEscribir.predicado);
+        else{
+            nombre = aEscribir.nombre;
+        }
+        while(nombre.length() < 50){
+            nombre += " ";
+        }
+        raf.writeChars(nombre);
+        for(i = 0; i < 8; i++){
+            if(aEscribir.conjuntos[i] == null){
+                aEscribir.conjuntos[i] = new Conjunto(true);
+            }
+            nombre = aEscribir.conjuntos[i].nombre;
+            while(nombre.length() < 20){
+                nombre += " ";
+            }
+            raf.writeChars(nombre);
+            for(j = 0; j < 4; j++){
+                if(aEscribir.conjuntos[i].puntosCriticos[j] == null){
+                    aEscribir.conjuntos[i].puntosCriticos[j] = new Punto(true);
+                }
+                raf.writeDouble(aEscribir.conjuntos[i].puntosCriticos[j].x);
+                raf.writeDouble(aEscribir.conjuntos[i].puntosCriticos[j].y);
+            }
+        }
     }
-    public void insertar(VariableLinguistica clausula) throws IOException{
+    public void insertar(VariableLinguistica variableLinguistica) throws IOException{
         boolean existe = true;
         RandomAccessFile lector = null, escritorIndice, escritor;
-        indice.llave = clausula.llave;
+        indice.llave = variableLinguistica.llave;
         indice.direccion = direccionSiguiente;
-        if(arbol.buscar(clausula.llave) != -1){
+        if(arbol.buscar(variableLinguistica.llave) != -1){
             JOptionPane.showMessageDialog(null, "La clave ya existe");
         }
         else{
             try{
-                lector = new RandomAccessFile("maestroClausula", "r");
+                lector = new RandomAccessFile("maestroVariableLinguistica", "r");
             }
             catch(FileNotFoundException e){
                 existe = false;
             }
             if(existe){
                 lector.close();
-                escritor = new RandomAccessFile("maestroClausula", "rw");
-                escritorIndice = new RandomAccessFile("indiceClausula", "rw");
+                escritor = new RandomAccessFile("maestroVariableLinguistica", "rw");
+                escritorIndice = new RandomAccessFile("indiceVariableLinguistica", "rw");
                 escritor.seek(escritor.length());
-                escribeClausula(clausula, escritor);
+                escribeVariableLinguistica(variableLinguistica, escritor);
                 escritorIndice.seek(escritorIndice.length());
                 escribeIndice(indice, escritorIndice);
+                System.out.println(escritor.getFilePointer());
                 escritor.close();
                 escritorIndice.close();
                 desbordados++;
             }
             else{
-                escritor = new RandomAccessFile("maestroClausula", "rw");
-                escritorIndice = new RandomAccessFile("indiceClausula", "rw");
-                escribeClausula(clausula, escritor);
+                escritor = new RandomAccessFile("maestroVariableLinguistica", "rw");
+                escritorIndice = new RandomAccessFile("indiceVariableLinguistica", "rw");
+                escribeVariableLinguistica(variableLinguistica, escritor);
+                System.out.println(escritor.getFilePointer());
                 escribeIndice(indice, escritorIndice);
+                System.out.println(escritor.getFilePointer());
                 escritor.close();
                 escritorIndice.close();
                 ordenados++;
             }
-            arbol.insertar(clausula.llave, direccionSiguiente);
+            arbol.insertar(variableLinguistica.llave, direccionSiguiente);
             direccionSiguiente++;
             reescribirControl();
         }
@@ -116,7 +143,7 @@ public class VariablesLinguisticas{
         long apuntadorFinal, ultimoApuntador;
         boolean marcado = false;
         try{
-            lector = new RandomAccessFile("indiceClausula", "rw");
+            lector = new RandomAccessFile("indiceVariableLinguistica", "rw");
         }
         catch(FileNotFoundException e){
             existe = false;
@@ -135,7 +162,7 @@ public class VariablesLinguisticas{
         }
     }
     private void recorreArbol(Nodo nodo, RandomAccessFile raf, ArrayList<VariableLinguistica> arreglo) throws IOException{
-        VariableLinguistica clausula;
+        VariableLinguistica variableLinguistica;
         if(nodo.izquierda != null){
             recorreArbol(nodo.izquierda, raf, arreglo);
         }
@@ -143,15 +170,15 @@ public class VariablesLinguisticas{
             raf.seek(nodo.direccion*registerLength);
             direccionActual = nodo.direccion;
         }
-        clausula = recuperaClausula(raf);
-        arreglo.add(clausula);
+        variableLinguistica = recuperaVariableLinguistica(raf);
+        arreglo.add(variableLinguistica);
         direccionActual++;
         if(nodo.derecha != null){
             recorreArbol(nodo.derecha, raf, arreglo);
         }
     }
     private void recorreArbolReestructurar(Nodo nodo, RandomAccessFile lector, RandomAccessFile escritor) throws IOException{
-        VariableLinguistica clausula;
+        VariableLinguistica variableLinguistica;
         if(nodo.izquierda != null){
             recorreArbolReestructurar(nodo.izquierda, lector, escritor);
         }
@@ -159,8 +186,8 @@ public class VariablesLinguisticas{
             lector.seek(nodo.direccion*registerLength);
             direccionActual = nodo.direccion;
         }
-        clausula = recuperaClausula(lector);
-        escribeClausula(clausula, escritor);
+        variableLinguistica = recuperaVariableLinguistica(lector);
+        escribeVariableLinguistica(variableLinguistica, escritor);
         direccionActual++;
         nodo.direccion = direccionReorganizados;
         direccionReorganizados++;
@@ -169,27 +196,27 @@ public class VariablesLinguisticas{
         }
     }
     public VariableLinguistica recuperarAleatorio(int llave) throws FileNotFoundException, IOException{
-        VariableLinguistica clausula = null;
+        VariableLinguistica variableLinguistica = null;
         RandomAccessFile lector = null;
         indice.llave = llave;
         indice.direccion = arbol.buscar(indice.llave);
         if(indice.direccion == -1){
-            //JOptionPane.showMessageDialog(null, "No hay una clausula con la llave "+indice.llave);
+            //JOptionPane.showMessageDialog(null, "No hay una variableLinguistica con la llave "+indice.llave);
         }
         else{
-            lector = new RandomAccessFile("maestroClausula", "r");
+            lector = new RandomAccessFile("maestroVariableLinguistica", "r");
             lector.seek(indice.direccion*registerLength);
-            clausula = recuperaClausula(lector);
+            variableLinguistica = recuperaVariableLinguistica(lector);
             lector.close();
         }
-        return clausula;
+        return variableLinguistica;
     }
     private void recuperarArbol() throws IOException{
         boolean existe = true;
         RandomAccessFile lector = null;
         arbol = new Arbol();
         try{
-            lector = new RandomAccessFile("indiceClausula", "r");
+            lector = new RandomAccessFile("indiceVariableLinguistica", "r");
         }
         catch(FileNotFoundException e){
             existe = false;
@@ -208,7 +235,7 @@ public class VariablesLinguisticas{
         boolean existe = true;
         RandomAccessFile lector = null;
         try{
-            lector = new RandomAccessFile("controlClausula", "r");
+            lector = new RandomAccessFile("controlVariableLinguistica", "r");
         }
         catch(FileNotFoundException e){
             existe = false;
@@ -230,31 +257,47 @@ public class VariablesLinguisticas{
         i.direccion = raf.readInt();
         return i;
     }
-    private VariableLinguistica recuperaClausula(RandomAccessFile lector) throws IOException{
-        int i, c;
-        char premisa[] = new char[30];
+    private VariableLinguistica recuperaVariableLinguistica(RandomAccessFile lector) throws IOException{
+        int i, j, c;
+        char nombreVL[] = new char[50];
+        char nombreConjunto[] = new char[20];
         VariableLinguistica l = new VariableLinguistica();
+        
         l.llave = lector.readInt();
-        for(i = 0; i < 16; i++){
-            for(c = 0; c < premisa.length; c++){
-                premisa[c] = lector.readChar();
+        
+        for(c = 0; c < nombreVL.length; c++){
+            nombreVL[c] = lector.readChar();
+        }
+        l.nombre = (new String(nombreVL).replace('\0', ' ')).trim();
+        
+        for(i = 0; i < 8; i++){
+            l.conjuntos[i] = new Conjunto();
+            
+            for(c = 0; c < nombreConjunto.length; c++){
+                nombreConjunto[c] = lector.readChar();
             }
-            l.predicadosNegados[i] = new String(premisa).replace('\0', ' ');
+            l.conjuntos[i].nombre = (new String(nombreConjunto).replace('\0', ' ')).trim();
+            
+            for(j = 0; j < 4; j++){
+                l.conjuntos[i].puntosCriticos[j] = new Punto();
+                l.conjuntos[i].puntosCriticos[j].x = lector.readDouble();
+                l.conjuntos[i].puntosCriticos[j].y = lector.readDouble();
+            }
+            
+            if(l.conjuntos[i].nombre.length() == 0){
+                l.conjuntos[i] = null;
+            }
         }
-        for(c = 0; c < premisa.length; c++){
-            premisa[c] = lector.readChar();
-        }
-        l.predicado = new String(premisa).replace('\0', ' ');
         return l;
     }
     public VariableLinguistica[] recuperarSecuencial() throws FileNotFoundException, IOException{
-        VariableLinguistica[] clausulas;
+        VariableLinguistica[] variableLinguisticas;
         boolean existe = true;
         RandomAccessFile lector = null;
         direccionActual = 0;
         ArrayList<VariableLinguistica> arreglo = new ArrayList<VariableLinguistica>();
         try{
-            lector = new RandomAccessFile("maestroClausula", "r");
+            lector = new RandomAccessFile("maestroVariableLinguistica", "r");
         }
         catch(FileNotFoundException e){
             existe = false;
@@ -265,17 +308,17 @@ public class VariablesLinguisticas{
             }
             lector.close();
         }
-        clausulas = new VariableLinguistica[arreglo.size()];
+        variableLinguisticas = new VariableLinguistica[arreglo.size()];
         for(int i = 0; i < arreglo.size(); i++){
-            clausulas[i] = arreglo.get(i);
+            variableLinguisticas[i] = arreglo.get(i);
         }
-        return clausulas;
+        return variableLinguisticas;
     }
     private void reescribirControl() throws IOException{
         boolean existe = true;
         RandomAccessFile lector = null;
         try{
-            lector = new RandomAccessFile("controlClausula", "rw");
+            lector = new RandomAccessFile("controlVariableLinguistica", "rw");
         }
         catch(FileNotFoundException e){
             existe = false;
@@ -297,7 +340,7 @@ public class VariablesLinguisticas{
         File file, newName;
         direccionReorganizados = direccionActual = 0;
         try{
-            lector = new RandomAccessFile("maestroClausula", "r");
+            lector = new RandomAccessFile("maestroVariableLinguistica", "r");
         }
         catch(FileNotFoundException e){
             existe = false;
@@ -310,11 +353,11 @@ public class VariablesLinguisticas{
             lector.close();
             escritor.close();
             file = new File("tmp");
-            newName = new File("maestroClausula");
+            newName = new File("maestroVariableLinguistica");
             newName.delete();
             file.renameTo(newName);
             
-            lector = new RandomAccessFile("indiceClausula", "rw");
+            lector = new RandomAccessFile("indiceVariableLinguistica", "rw");
             escritor = new RandomAccessFile("tmp", "rw");
             while(lector.getFilePointer() != lector.length()){
                 indice = recuperaIndice(lector);
@@ -326,7 +369,7 @@ public class VariablesLinguisticas{
             lector.close();
             escritor.close();
             file = new File("tmp");
-            newName = new File("indiceClausula");
+            newName = new File("indiceVariableLinguistica");
             newName.delete();
             file.renameTo(newName);
         }
