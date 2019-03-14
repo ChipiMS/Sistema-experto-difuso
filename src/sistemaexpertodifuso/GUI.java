@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -112,7 +111,7 @@ public class GUI extends JFrame {
                 try {
                     valor = new JLabel("");
                     int valor_de_entrada = 0;
-                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "LLave de la variable linguistica a evaluar:", JOptionPane.INPUT_VALUE_PROPERTY));
+                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable linguistica a evaluar:", JOptionPane.INPUT_VALUE_PROPERTY));
                     VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
                     if (variable != null) {
                         JOptionPane optionPane = new JOptionPane();
@@ -124,12 +123,11 @@ public class GUI extends JFrame {
                         optionPane.add(valor);
                         JDialog dialog = optionPane.createDialog(cp, "Difuzificar:" + variable.nombre);
                         dialog.setVisible(true);
-                        valor_de_entrada = (int) optionPane.getInputValue();
+                        valor_de_entrada = slider.getValue();
 
                         System.out.println("Variable linguistica a evaluar:" + variable.nombre);
                         System.out.println("Valor de entrada:" + valor_de_entrada);
                         System.out.println("-----------------------------------------");
-                        Conjunto objCon =  new Conjunto(true);
                        
                         for (int i = 0; i < 8; i++) {
                             if (variable.conjuntos[i] != null) {
@@ -139,12 +137,9 @@ public class GUI extends JFrame {
                                 for (int j = 0; j < 4; j++) {
                                     if (variable.conjuntos[i].puntosCriticos[j] != null && variable.conjuntos[i].puntosCriticos[j].y != -1) {
                                         System.out.println(variable.conjuntos[i].puntosCriticos[j].x + "," + variable.conjuntos[i].puntosCriticos[j].y) ;
-                                        objCon.puntosCriticos[i].x = variable.conjuntos[i].puntosCriticos[j].x;
-                                        objCon.puntosCriticos[i].y = variable.conjuntos[i].puntosCriticos[j].y;
-                                                                           
                                     }
                                 }
-                                 System.out.println("Grado de membresia: " + objCon.evaluar((double)(valor_de_entrada))); 
+                                 System.out.println("Grado de membresia: " + variable.conjuntos[i].evaluar((double)(valor_de_entrada))); 
                                  System.out.println("");
                                  System.out.println("------------------------------------------------------");
                             }
