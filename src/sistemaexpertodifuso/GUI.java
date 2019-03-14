@@ -122,7 +122,7 @@ public class GUI extends JFrame {
                         optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
                         optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
                         optionPane.add(valor);
-                        JDialog dialog = optionPane.createDialog(cp, "Difuzificar (Nombre de la variable)");
+                        JDialog dialog = optionPane.createDialog(cp, "Difuzificar:" + variable.nombre);
                         dialog.setVisible(true);
                         valor_de_entrada = (Integer) optionPane.getInputValue();
                         messages.setText("" + valor_de_entrada);
