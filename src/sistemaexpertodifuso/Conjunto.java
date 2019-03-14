@@ -15,4 +15,25 @@ class Conjunto{
             puntosCriticos[i] = new Punto(true);
         }
     }
+    
+    public Double evaluar(Double x) {
+    	int limit = puntosCriticos.length - 1;
+    	
+    	for (int i = 0; i < limit; i++) {
+    		Punto primer = puntosCriticos[i];
+    		Punto segundo = puntosCriticos[i + 1];
+    		
+			if (!primer.esVacio() && !segundo.esVacio() && primer.x >= x && segundo.x <= x) {
+				return evaluarRecta(primer, segundo, x);
+			}
+		}
+    	
+    	return 0.0;
+    }
+    
+    private Double evaluarRecta(Punto primer, Punto segundo, double x) {
+    	Double pendiente = (segundo.y - primer.y) / (segundo.x - primer.x);
+    	
+    	return primer.y + pendiente * (x - primer.x);
+    }
 }
