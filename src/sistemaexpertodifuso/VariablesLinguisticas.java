@@ -116,7 +116,7 @@ public class VariablesLinguisticas{
                 escribeVariableLinguistica(variableLinguistica, escritor);
                 escritorIndice.seek(escritorIndice.length());
                 escribeIndice(indice, escritorIndice);
-                System.out.println(escritor.getFilePointer());
+                //System.out.println(escritor.getFilePointer());
                 escritor.close();
                 escritorIndice.close();
                 desbordados++;
@@ -125,9 +125,8 @@ public class VariablesLinguisticas{
                 escritor = new RandomAccessFile("maestroVariableLinguistica", "rw");
                 escritorIndice = new RandomAccessFile("indiceVariableLinguistica", "rw");
                 escribeVariableLinguistica(variableLinguistica, escritor);
-                System.out.println(escritor.getFilePointer());
+                //System.out.println(escritor.getFilePointer());
                 escribeIndice(indice, escritorIndice);
-                System.out.println(escritor.getFilePointer());
                 escritor.close();
                 escritorIndice.close();
                 ordenados++;

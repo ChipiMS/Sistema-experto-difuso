@@ -26,6 +26,7 @@ import javax.swing.event.ChangeEvent;
 public class GUI extends JFrame {
 
     VariablesLinguisticas variablesLinguisticas;
+    ArchivoReglas reglasDifusas;
     JTextArea messages;
     JPanel panelHechos;
     static JLabel valor;
@@ -36,8 +37,9 @@ public class GUI extends JFrame {
     | |  _| | | || | 
     | |_| | |_| || | 
      \____|\___/|___|*/
-    GUI(VariablesLinguisticas variablesLinguisticas) throws IOException {
+    GUI(VariablesLinguisticas variablesLinguisticas, ArchivoReglas reglasDifusas) throws IOException {
         this.variablesLinguisticas = variablesLinguisticas;
+        this.reglasDifusas = reglasDifusas;
         Container cp = getContentPane();
         setSize(600, 600);
         setTitle("Sistema experto difuso");
@@ -70,19 +72,18 @@ public class GUI extends JFrame {
     |_|  |_|\___|_| |_|\__,_|*/
     JMenuBar createMenu(Container cp) throws IOException {
         JMenuBar menuBar;
-        JMenu menuVariablesLinguisticas;
-        JMenu menuFuzzy;
-        JMenuItem menuItem, menuItemVL;
+        JMenu menuVariablesLinguisticas, menuFuzzy, menuReglas;
+        JMenuItem menuItem;
         menuBar = new JMenuBar();
         menuVariablesLinguisticas = new JMenu("Variables lingüisticas");
         menuFuzzy = new JMenu("Difuzificar");
+        menuReglas = new JMenu("Reglas difusas");
         menuBar.add(menuVariablesLinguisticas);
         menuBar.add(menuFuzzy);
+        menuBar.add(menuReglas);
 
         //Variables lingüisticas-------------------------------------------------------------------------------------------------------------------------------------------------------------------
         menuItem = new JMenuItem("Mostrar las variables lingüisticas");
-        menuItemVL = new JMenuItem("Evaluar variable lingüistica");
-
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -104,8 +105,72 @@ public class GUI extends JFrame {
                 JOptionPane.showMessageDialog(cp, reglas);
             }
         });
+        menuVariablesLinguisticas.add(menuItem);
 
-        menuItemVL.addActionListener(new ActionListener() {
+        menuItem = new JMenuItem("Actualizar variable lingüistica");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable lingüistica a actualizar:", JOptionPane.INPUT_VALUE_PROPERTY));
+                    VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
+                    if (variable != null) {
+                        new FormularioVariablesLinguisticas(variable, variablesLinguisticas, true);
+                    } else {
+                        JOptionPane.showMessageDialog(cp, "No existe una las variable lingüistica con esa llave.");
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        menuVariablesLinguisticas.add(menuItem);
+
+        menuItem = new JMenuItem("Nueva variable lingüistica");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la nueva variable lingüistica", JOptionPane.INPUT_VALUE_PROPERTY));
+                    VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
+                    if (variable == null) {
+                        variable = new VariableLinguistica();
+                        variable.llave = llave;
+                        new FormularioVariablesLinguisticas(variable, variablesLinguisticas, false);
+                    } else {
+                        JOptionPane.showMessageDialog(cp, "Ya existe una variable lingüistica con esa llave.");
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        menuVariablesLinguisticas.add(menuItem);
+
+        menuItem = new JMenuItem("Borrar variable lingüistica");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable lingüistica que se va a borrar", JOptionPane.INPUT_VALUE_PROPERTY));
+                    VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
+                    if (variable != null) {
+                        variablesLinguisticas.borrar(llave);
+                    } else {
+                        JOptionPane.showMessageDialog(cp, "No existe una variable lingüistica con esa llave.");
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        menuVariablesLinguisticas.add(menuItem);
+        
+        //Evaluación-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        menuItem = new JMenuItem("Evaluar variable lingüistica");
+        menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -152,51 +217,27 @@ public class GUI extends JFrame {
                 }
             }
         });
-
-        menuVariablesLinguisticas.add(menuItem);
-        menuFuzzy.add(menuItemVL);
-
-        menuItem = new JMenuItem("Actualizar variable lingüistica");
+        menuFuzzy.add(menuItem);
+        
+        //Reglas difusas-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        menuItem = new JMenuItem("Nueva regla difusa");
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                try {
-                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable lingüistica a actualizar:", JOptionPane.INPUT_VALUE_PROPERTY));
-                    VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
-                    if (variable != null) {
-                        new FormularioVariablesLinguisticas(variable, variablesLinguisticas, true);
-                    } else {
-                        JOptionPane.showMessageDialog(cp, "No existen una las variable lingüistica con esa llave.");
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la nueva regla difusa", JOptionPane.INPUT_VALUE_PROPERTY));
+                ReglaDifusa regla;
+                if(reglasDifusas.existe(llave)){
+                    JOptionPane.showMessageDialog(cp, "Ya existe una regla difusa con esa llave.");
+                }
+                else{
+                    regla = new ReglaDifusa(llave);
+                    new FormularioReglasDifusas(regla, reglasDifusas, false);
                 }
             }
         });
-        menuVariablesLinguisticas.add(menuItem);
+        menuReglas.add(menuItem);
 
-        menuItem = new JMenuItem("Nueva variable lingüistica");
-        menuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                try {
-                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la la nueva variable lingüistica", JOptionPane.INPUT_VALUE_PROPERTY));
-                    VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
-                    if (variable == null) {
-                        variable = new VariableLinguistica();
-                        variable.llave = llave;
-                        new FormularioVariablesLinguisticas(variable, variablesLinguisticas, false);
-                    } else {
-                        JOptionPane.showMessageDialog(cp, "Ya existen una variable lingüistica con esa llave.");
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        menuVariablesLinguisticas.add(menuItem);
-
-        menuItem = new JMenuItem("Borrar variable lingüistica");
+        menuItem = new JMenuItem("Borrar regla difusa");
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -206,7 +247,7 @@ public class GUI extends JFrame {
                     if (variable != null) {
                         variablesLinguisticas.borrar(llave);
                     } else {
-                        JOptionPane.showMessageDialog(cp, "No existen una variable lingüistica con esa llave.");
+                        JOptionPane.showMessageDialog(cp, "No existe una variable lingüistica con esa llave.");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -215,7 +256,7 @@ public class GUI extends JFrame {
                 }
             }
         });
-        menuVariablesLinguisticas.add(menuItem);
+        menuReglas.add(menuItem);
 
         return menuBar;
     }
