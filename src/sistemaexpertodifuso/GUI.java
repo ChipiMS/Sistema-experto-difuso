@@ -226,38 +226,77 @@ public class GUI extends JFrame {
             public void actionPerformed(ActionEvent ae) {
                 int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la nueva regla difusa", JOptionPane.INPUT_VALUE_PROPERTY));
                 ReglaDifusa regla;
-                if(reglasDifusas.existe(llave)){
-                    JOptionPane.showMessageDialog(cp, "Ya existe una regla difusa con esa llave.");
-                }
-                else{
-                    regla = new ReglaDifusa(llave);
-                    new FormularioReglasDifusas(regla, reglasDifusas, false);
+                try {
+                    if(reglasDifusas.existe(llave)){
+                        JOptionPane.showMessageDialog(cp, "Ya existe una regla difusa con esa llave.");
+                    }
+                    else{
+                        regla = new ReglaDifusa(llave);
+                        new FormularioReglasDifusas(regla, reglasDifusas, false);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
         menuReglas.add(menuItem);
+        
+        
+        menuItem = new JMenuItem("Editar reglas difusas");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la regla difusa a editar", JOptionPane.INPUT_VALUE_PROPERTY));
+                ReglaDifusa regla;
+                try {
+                    if(!reglasDifusas.existe(llave)){
+                        JOptionPane.showMessageDialog(cp, "No existe una regla difusa con esa llave.");
+                    }
+                    else{
+                        System.out.println("Aqui se edita la regla ");
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        menuReglas.add(menuItem);
+        
 
         menuItem = new JMenuItem("Borrar regla difusa");
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+              int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la regla difusa a eliminar", JOptionPane.INPUT_VALUE_PROPERTY));
+                ReglaDifusa regla;
                 try {
-                    int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable lingüistica que se va a borrar", JOptionPane.INPUT_VALUE_PROPERTY));
-                    VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
-                    if (variable != null) {
-                        variablesLinguisticas.borrar(llave);
-                    } else {
-                        JOptionPane.showMessageDialog(cp, "No existe una variable lingüistica con esa llave.");
+                    if(!reglasDifusas.existe(llave)){
+                        JOptionPane.showMessageDialog(cp, "No existe una regla difusa con esa llave.");
+                    }
+                    else{
+                        System.out.println("Aqui se borra la regla ");
                     }
                 } catch (IOException ex) {
-                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
         menuReglas.add(menuItem);
-
+        
+        menuItem = new JMenuItem("Listar reglas difusas");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    messages.append("\n--------------------------------\n");
+                    messages.append(reglasDifusas.muestra_reglasDifusas());
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        menuReglas.add(menuItem);
+      
         return menuBar;
     }
 
