@@ -12,6 +12,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 public class ArchivoReglas {
 
@@ -28,6 +29,10 @@ public class ArchivoReglas {
         raf.writeInt(aEscribir.consecuente.llaveVariableLiguistica);
         raf.writeInt(aEscribir.consecuente.llaveConjunto);
         raf.writeInt(-1);
+    }
+
+    private void borraReglaDifusa(int llave) {
+
     }
 
     public boolean existe(int llave) throws IOException {
@@ -58,6 +63,26 @@ public class ArchivoReglas {
         }
     }
 
+    public void ArrayReglasDifusas() throws IOException {
+        int actual;
+        boolean existeArchivo = true;
+        RandomAccessFile lector = null;
+        try {
+            lector = new RandomAccessFile("reglasDifusas", "r");
+        } catch (FileNotFoundException w) {
+            existeArchivo = false;
+        }
+
+        if (existeArchivo) {
+            System.out.println("    Llaves:");
+            while (lector.getFilePointer() != lector.length()) {
+                actual = lector.readInt();
+                System.out.print(actual - 1);
+            }
+        }
+
+    }
+
     public void insertar(ReglaDifusa regla) throws IOException {
         boolean existe = true;
         RandomAccessFile lector = null, escritorIndice, escritor;
@@ -82,25 +107,29 @@ public class ArchivoReglas {
     public String muestra_reglasDifusas() throws IOException {
         long ap_actual, ap_final;
         int elemento, elemento2;
-        //String salida = "\nReglas difusas\n---------------------------\n";
         String salida = "";
-        RandomAccessFile leer_archi = new RandomAccessFile("reglasDifusas", "r");
-        while ((ap_actual = leer_archi.getFilePointer()) != (ap_final = leer_archi.length())) {
-            elemento = leer_archi.readInt();
-
-            if (elemento == -1) {
-                salida += elemento + "\n\n";
-                //System.out.print(elemento + "\n");
-                //System.out.println(elemento + "\n   ");
-                //System.out.print("\n");
-                //System.out.println();
-            } else {
-                //System.out.print(elemento + "  ");
-                salida += elemento + " ";
-                //System.out.println(elemento);
-            }
-            // m_procesoCadena(salida);
-        }//Fin while
+        boolean existeArchivo = true;
+        RandomAccessFile lector = null;
+        try {
+            lector = new RandomAccessFile("reglasDifusas", "r");
+        } catch (FileNotFoundException w) {
+            existeArchivo = false;
+        }
+        if (existeArchivo) {
+            //String salida = "\nReglas difusas\n---------------------------\n";
+            RandomAccessFile leer_archi = new RandomAccessFile("reglasDifusas", "r");
+            while ((ap_actual = leer_archi.getFilePointer()) != (ap_final = leer_archi.length())) {
+                elemento = leer_archi.readInt();
+                if (elemento == -1) {
+                    salida += elemento + "\n\n";
+                } else {
+                    salida += elemento + " ";
+                }
+            }//Fin while
+        }else{
+            JOptionPane.showMessageDialog(null, "No existe el archivo, agregue reglas difusas para crearlo");
+        }
+        ArrayReglasDifusas();
         return salida;
     }
 }
