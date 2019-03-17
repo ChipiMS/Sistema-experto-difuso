@@ -63,25 +63,7 @@ public class ArchivoReglas {
         }
     }
 
-    public void ArrayReglasDifusas() throws IOException {
-        int actual;
-        boolean existeArchivo = true;
-        RandomAccessFile lector = null;
-        try {
-            lector = new RandomAccessFile("reglasDifusas", "r");
-        } catch (FileNotFoundException w) {
-            existeArchivo = false;
-        }
-
-        if (existeArchivo) {
-            System.out.println("    Llaves:");
-            while (lector.getFilePointer() != lector.length()) {
-                actual = lector.readInt();
-                System.out.print(actual - 1);
-            }
-        }
-
-    }
+   
 
     public void insertar(ReglaDifusa regla) throws IOException {
         boolean existe = true;
@@ -129,7 +111,6 @@ public class ArchivoReglas {
         }else{
             JOptionPane.showMessageDialog(null, "No existe el archivo, agregue reglas difusas para crearlo");
         }
-        ArrayReglasDifusas();
         return salida;
     }
 }
