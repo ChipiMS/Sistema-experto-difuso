@@ -219,4 +219,67 @@ public class ArchivoReglas {
 
     }
 
+    ReglaDifusa[] recuperarTodo() throws FileNotFoundException, IOException {
+        ArrayList<ReglaDifusa> reglas = new ArrayList<>();
+        ReglaDifusa regla;
+        boolean existe = true;
+        RandomAccessFile lector = null;
+        int ultimo;
+        try {
+            lector = new RandomAccessFile("reglasDifusas", "r");
+        } catch (FileNotFoundException e) {
+            existe = false;
+        }
+        if (existe) {
+            while(lector.getFilePointer() != lector.length()){
+                ultimo = lector.readInt();
+                if(ultimo != -1){
+                    regla = new ReglaDifusa(ultimo);
+                    reglas.add(regla);
+                    leeReglaDifusa(regla, lector);
+                }
+            }
+            lector.close();
+        }
+        else{
+            return new ReglaDifusa[0];
+        }
+        ReglaDifusa[] reglasDifusas = new ReglaDifusa[reglas.size()];
+        for(int i = 0; i < reglas.size(); i++){
+            reglasDifusas[i] = reglas.get(i);
+        }
+        return reglasDifusas;
+    }
+
+    private void leeReglaDifusa(ReglaDifusa regla, RandomAccessFile lector) throws IOException {
+        boolean sigueLeyendo = true;
+        int llaveVariable;
+        while(sigueLeyendo){
+            llaveVariable = lector.readInt();
+            if(llaveVariable != -1){
+                regla.antecedentes.add(new VariableConjunto(llaveVariable, lector.readInt()));
+            }
+            else{
+                sigueLeyendo = false;
+            }
+        }
+        regla.consecuente = regla.antecedentes.remove(regla.antecedentes.size()-1);
+    }
+
+    String mostrarTodo() throws IOException {
+        ReglaDifusa[] todasLasReglas = recuperarTodo();
+        String respuesta = "";
+        for(int i = 0; i < todasLasReglas.length; i++){
+            respuesta += "\nLlave: "+todasLasReglas[i].llave+", regla: ";
+            for(int j = 0; j < todasLasReglas[i].antecedentes.size(); j++){
+                if(j > 0){
+                    respuesta += "^";
+                }
+                respuesta += "("+todasLasReglas[i].antecedentes.get(j).llaveVariableLiguistica+","+todasLasReglas[i].antecedentes.get(j).llaveConjunto+")";
+            }
+            respuesta += "->("+todasLasReglas[i].consecuente.llaveVariableLiguistica+","+todasLasReglas[i].consecuente.llaveConjunto+")";
+        }
+        return respuesta;
+    }
+
 }
