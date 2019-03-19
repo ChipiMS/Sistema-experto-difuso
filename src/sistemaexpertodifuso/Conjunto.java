@@ -1,5 +1,6 @@
 package sistemaexpertodifuso;
 class Conjunto{
+	VariableConjunto variableConjunto;
     String nombre;
     Punto[] puntosCriticos;
 
@@ -16,7 +17,7 @@ class Conjunto{
         }
     }
     
-    public Double evaluar(Double x) {
+    public ResultadoDifuso evaluar(Double x) {
     	int limit = puntosCriticos.length - 1;
     	
     	for (int i = 0; i < limit; i++) {
@@ -24,15 +25,11 @@ class Conjunto{
     		Punto segundo = puntosCriticos[i + 1];
     		
 			if (!primer.esVacio() && !segundo.esVacio() && primer.x <= x && x <= segundo.x) {
-			
-                            return evaluarRecta(primer, segundo, x);
-                                
-			}
-                        
+				return new ResultadoDifuso(evaluarRecta(primer, segundo, x), variableConjunto);                 
+			}        
 		}
-       
     	
-    	return 0.0;
+    	return new ResultadoDifuso(0.0, variableConjunto);
     }
     
     private Double evaluarRecta(Punto primer, Punto segundo, double x) {

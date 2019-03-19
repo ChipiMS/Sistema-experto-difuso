@@ -204,7 +204,7 @@ public class GUI extends JFrame {
                                         messages.append(variable.conjuntos[i].puntosCriticos[j].x + "," + variable.conjuntos[i].puntosCriticos[j].y+"\n");
                                     }
                                 }
-                                 messages.append("Grado de membresia: " + variable.conjuntos[i].evaluar((double)(valor_de_entrada))+"\n"); 
+                                 messages.append("Grado de membresia: " + variable.conjuntos[i].evaluar((double)(valor_de_entrada)).valor +"\n"); 
                                  messages.append("\n");
                                  messages.append("------------------------------------------------------\n");
                             }
