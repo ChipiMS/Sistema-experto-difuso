@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -36,6 +37,10 @@ public class GUI extends JFrame {
     JPanel panelVariables, pnlSliders;
     static JLabel valor;
     JTextField[] valores;
+    JLabel[] llaves;
+    JLabel[] nombres;
+    JSlider[] sliders;
+    ArrayList<ResultadoDifuso> arrayResultadosDifusos;
 
     /*
       ____ _   _ ___ 
@@ -225,10 +230,11 @@ public class GUI extends JFrame {
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                arrayResultadosDifusos = new ArrayList<ResultadoDifuso>();
                 //Obtener datos de las variables linguisticas
                 VariableLinguistica variables[] = null;
                 int num_var;
-                JButton btnDifuzificar;
+                JButton btnDifuzificar = null;
                 try {
                     variables = variablesLinguisticas.recuperarSecuencial();
                 } catch (IOException ex) {
@@ -280,10 +286,56 @@ public class GUI extends JFrame {
 
                 }
                 Container cp = getContentPane();
+                btnDifuzificar = new JButton("Difuzificar");
 
                 panelVariables = new JPanel();
                 JScrollPane codeScrollPane = new JScrollPane(pnlVarLin);
                 cp.add(codeScrollPane, BorderLayout.CENTER);
+                cp.add(btnDifuzificar, BorderLayout.EAST);
+
+                btnDifuzificar.addActionListener(new ActionListener() {
+
+                    VariableLinguistica vls = new VariableLinguistica();
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        
+                        try {
+                            
+                            VariableLinguistica variable = null;
+                            for (int i = 0; i < valores.length; i++) {
+                                variable = variablesLinguisticas.recuperarAleatorio(Integer.parseInt(llaves[i].getText()));
+                                double valor_entrada = (double)Integer.parseInt(valores[i].getText());
+                                messages.append("\nVariable linguistica a evaluar:" + variable.nombre + "\n");
+                                messages.append("Valor de entrada:" + valor_entrada + "\n");
+                                messages.append("-----------------------------------------\n");
+
+                                for (int j = 0; j < 8; j++) {
+                                    if (variable.conjuntos[j] != null) {
+                                        
+                                        messages.append("Nombre: " + variable.conjuntos[j].nombre + "\n");
+                                        messages.append("Puntos Criticos:\n");
+                                        for (int k = 0; k < 4; k++) {
+                                            if (variable.conjuntos[j].puntosCriticos[k] != null && variable.conjuntos[j].puntosCriticos[k].y != -1) {
+                                                messages.append(variable.conjuntos[j].puntosCriticos[k].x + "," + variable.conjuntos[j].puntosCriticos[k].y + "\n");
+                                            }
+                                        }
+                                       
+                                        messages.append("Grado de membresia: " + variable.conjuntos[j].evaluar((double) (valor_entrada)).valor + "\n");
+                                        messages.append("\n");
+                                        messages.append("------------------------------------------------------\n");
+                                    }
+
+                                }
+                            }
+
+                        } catch (IOException ex) {
+                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                });
+
             }
         }
         );

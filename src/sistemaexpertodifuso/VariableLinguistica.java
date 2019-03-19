@@ -5,7 +5,7 @@ class VariableLinguistica {
     String nombre;
     Conjunto[] conjuntos;
 
-    public VariableLinguistica(){
+    public VariableLinguistica() {
         conjuntos = new Conjunto[8];
     }
 
@@ -13,32 +13,27 @@ class VariableLinguistica {
         int i, j;
         String variable = "";
         variable += this.llave;
-        variable += "  Nombre: "+nombre+"\n";
+        variable += "  Nombre: " + nombre + "\n";
         variable += "Conjuntos:";
-        for(i = 0; i < 8; i++){
-            if(conjuntos[i] != null){
-                variable += "\nNombre: "+conjuntos[i].nombre;
+        for (i = 0; i < 8; i++) {
+            if (conjuntos[i] != null) {
+                variable += "\nNombre: " + conjuntos[i].nombre;
                 variable += " Puntos críticos:";
-                for(j = 0; j < 4; j++){
-                    if(conjuntos[i].puntosCriticos[j] != null && conjuntos[i].puntosCriticos[j].y != -1){
-                        variable += " ("+conjuntos[i].puntosCriticos[j].x+","+conjuntos[i].puntosCriticos[j].y+")";
+                for (j = 0; j < 4; j++) {
+                    if (conjuntos[i].puntosCriticos[j] != null && conjuntos[i].puntosCriticos[j].y != -1) {
+                        variable += " (" + conjuntos[i].puntosCriticos[j].x + "," + conjuntos[i].puntosCriticos[j].y + ")";
                     }
                 }
             }
         }
         return variable;
     }
-    
-    
-    
-    
-    public int obtenLLaveVariable(){
+
+    public int obtenLLaveVariable() {
         return this.llave;
     }
-    
-    public String obtenNombreVar(){
+
+    public String obtenNombreVar() {
         return this.nombre;
     }
-    
-    
 }

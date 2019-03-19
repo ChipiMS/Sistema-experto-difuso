@@ -123,7 +123,7 @@ public class ArchivoReglas {
             VariableConjunto consecuente = new VariableConjunto();
 
             String regla = null;
-            String conse;
+            String conse;   
             regla = st.nextToken();
             int cons1, cons2, llave;
             conse = regla.trim().substring(regla.trim().length() - 2, regla.trim().length());
