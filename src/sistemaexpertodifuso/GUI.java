@@ -26,7 +26,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 
 public class GUI extends JFrame {
@@ -228,8 +227,7 @@ public class GUI extends JFrame {
             public void actionPerformed(ActionEvent ae) {
                 //Obtener datos de las variables linguisticas
                 VariableLinguistica variables[] = null;
-                int num_var, llave;
-                String nombre = "";
+                int num_var;
                 JButton btnDifuzificar;
                 try {
                     variables = variablesLinguisticas.recuperarSecuencial();
@@ -251,7 +249,6 @@ public class GUI extends JFrame {
                 valores = new JTextField[num_var];
 
                 Map<JSlider, JTextField> fieldMap;
-//...
                 fieldMap = new HashMap<>();
 
                 JPanel pnlVarLin = new JPanel(new GridLayout(num_var, 4));
@@ -286,12 +283,7 @@ public class GUI extends JFrame {
 
                 panelVariables = new JPanel();
                 JScrollPane codeScrollPane = new JScrollPane(pnlVarLin);
-
-                
-
                 cp.add(codeScrollPane, BorderLayout.CENTER);
-               
-
             }
         }
         );
