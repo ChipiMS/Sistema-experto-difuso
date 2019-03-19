@@ -7,8 +7,10 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -41,6 +43,7 @@ public class GUI extends JFrame {
     JLabel[] nombres;
     JSlider[] sliders;
     ArrayList<ResultadoDifuso> arrayResultadosDifusos;
+    int variableLinguisticaResultado;
 
     /*
       ____ _   _ ___ 
@@ -49,9 +52,10 @@ public class GUI extends JFrame {
     | |_| | |_| || | 
      \____|\___/|___|*/
     GUI(VariablesLinguisticas variablesLinguisticas, ArchivoReglas reglasDifusas) throws IOException {
+        Container cp = getContentPane();
+        recuperaVariableLinguisticaResultado(cp);
         this.variablesLinguisticas = variablesLinguisticas;
         this.reglasDifusas = reglasDifusas;
-        Container cp = getContentPane();
         setSize(900, 650);
         setTitle("Sistema experto difuso");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -173,6 +177,28 @@ public class GUI extends JFrame {
                 }
             }
         });
+        menuVariablesLinguisticas.add(menuItem);
+        
+        
+        
+        menuItem = new JMenuItem("Especificar VL del resultado");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    RandomAccessFile escritor;
+                    escritor = new RandomAccessFile("variableResultado", "rw");
+                    variableLinguisticaResultado = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable difusa que indica el resultado", JOptionPane.INPUT_VALUE_PROPERTY));
+                    escritor.writeInt(variableLinguisticaResultado);
+                    escritor.close();
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        );
         menuVariablesLinguisticas.add(menuItem);
 
         //Evaluación-------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -421,7 +447,8 @@ public class GUI extends JFrame {
             ) {
                 try {
                     messages.append("\n--------------------------------\n");
-                    messages.append(reglasDifusas.muestra_reglasDifusas());
+                    messages.append("\n"+reglasDifusas.mostrarTodo());
+                    
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -449,5 +476,25 @@ public class GUI extends JFrame {
         };
         slider.addChangeListener((javax.swing.event.ChangeListener) changeListener);
         return slider;
+    }
+
+    private void recuperaVariableLinguisticaResultado(Container cp) throws IOException {
+        boolean existeArchivo = true;
+        RandomAccessFile lector = null, escritor;
+        try {
+            lector = new RandomAccessFile("variableResultado", "r");
+        } catch (FileNotFoundException e) {
+            existeArchivo = false;
+        }
+        if (existeArchivo) {
+            variableLinguisticaResultado = lector.readInt();
+            lector.close();
+        }
+        else{
+            escritor = new RandomAccessFile("variableResultado", "rw");
+            variableLinguisticaResultado = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable difusa que indica el resultado", JOptionPane.INPUT_VALUE_PROPERTY));
+            escritor.writeInt(variableLinguisticaResultado);
+            escritor.close();
+        }
     }
 }
