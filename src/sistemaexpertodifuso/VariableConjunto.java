@@ -1,6 +1,11 @@
 package sistemaexpertodifuso;
+
 public class VariableConjunto {
+
     int llaveVariableLiguistica, llaveConjunto;
+
+    public VariableConjunto() {
+    }
 
     public VariableConjunto(int llaveVariableLiguistica, int llaveConjunto) {
         this.llaveVariableLiguistica = llaveVariableLiguistica;
@@ -22,11 +27,5 @@ public class VariableConjunto {
     public void setLlaveConjunto(int llaveConjunto) {
         this.llaveConjunto = llaveConjunto;
     }
-    
-    
-    
-    
-    
-    
-    
+
 }

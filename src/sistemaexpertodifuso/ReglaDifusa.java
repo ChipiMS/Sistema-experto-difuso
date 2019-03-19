@@ -5,6 +5,8 @@ public class ReglaDifusa {
     ArrayList<VariableConjunto> antecedentes;
     VariableConjunto consecuente;
 
+    public ReglaDifusa() {
+    }
     public ReglaDifusa(int llave){
         this.llave = llave;
         antecedentes = new ArrayList<>();

@@ -1,17 +1,10 @@
 package sistemaexpertodifuso;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 
 public class ArchivoReglas {
@@ -29,10 +22,6 @@ public class ArchivoReglas {
         raf.writeInt(aEscribir.consecuente.llaveVariableLiguistica);
         raf.writeInt(aEscribir.consecuente.llaveConjunto);
         raf.writeInt(-1);
-    }
-
-    private void borraReglaDifusa(int llave) {
-
     }
 
     public boolean existe(int llave) throws IOException {
@@ -62,8 +51,6 @@ public class ArchivoReglas {
             return false;
         }
     }
-
-   
 
     public void insertar(ReglaDifusa regla) throws IOException {
         boolean existe = true;
@@ -103,14 +90,133 @@ public class ArchivoReglas {
             while ((ap_actual = leer_archi.getFilePointer()) != (ap_final = leer_archi.length())) {
                 elemento = leer_archi.readInt();
                 if (elemento == -1) {
-                    salida += elemento + "\n\n";
+                    salida += elemento + "\n";
                 } else {
-                    salida += elemento + " ";
+                    salida += elemento + "";
                 }
             }//Fin while
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "No existe el archivo, agregue reglas difusas para crearlo");
         }
-        return salida;
+
+        m_ProcCadena(salida);
+
+        return (salida);
     }
+
+    public String m_remplaza(String p_cadena) {
+
+        p_cadena = p_cadena.trim().replace("-1", "*");
+        p_cadena = p_cadena.trim().replace(" ", "");
+        System.out.println(p_cadena);
+
+        return p_cadena;
+    }
+
+    public void m_ProcCadena(String p_cadena) {
+
+        StringTokenizer st = new StringTokenizer(m_remplaza(p_cadena), "*");
+        int cont = 0;
+        while (st.hasMoreTokens()) {
+            ReglaDifusa objRegla = new ReglaDifusa();
+            ArrayList<VariableConjunto> arrayVariableConjuntos = new ArrayList<>();
+            VariableConjunto consecuente = new VariableConjunto();
+
+            String regla = null;
+            String conse;
+            regla = st.nextToken();
+            int cons1, cons2, llave;
+            conse = regla.trim().substring(regla.trim().length() - 2, regla.trim().length());
+            char[] consecue = conse.toCharArray();
+            String c1 = Character.toString(consecue[0]);
+            String c2 = Character.toString(consecue[1]);
+
+            cons1 = Integer.valueOf(c1);
+            cons2 = Integer.valueOf(c2);
+
+            regla = regla.trim().replaceFirst("[\\s\\S]{0,2}$", "");
+
+            //Obtener llave
+            if (cont < 9) {
+                char key = regla.trim().charAt(0);
+                String key2 = Character.toString(key);
+                llave = Integer.parseInt(key2);
+                //System.out.println("LLave: " + llave);
+                regla = regla.trim().substring(1);
+                objRegla.setLlave(llave);
+            } else if (cont >= 9 && cont <= 99) {
+                String key2 = regla.trim().substring(0, 2);
+                llave = Integer.parseInt(key2);
+                // System.out.println("LLave: " + llave);
+                regla = regla.trim().substring(2);
+                objRegla.setLlave(llave);
+            } else if (cont >= 100 && cont <= 999) {
+                String key2 = regla.trim().substring(0, 3);
+                llave = Integer.parseInt(key2);
+                //System.out.println("LLave: " + llave);
+                regla = regla.trim().substring(3);
+                objRegla.setLlave(llave);
+            } else if (cont >= 1000 && cont < 10000) {
+                String key2 = regla.trim().substring(0, 4);
+                llave = Integer.parseInt(key2);
+                //System.out.println("LLave: " + llave);
+                regla = regla.trim().substring(4);
+                objRegla.setLlave(llave);
+            }
+            regla = regla.trim().replaceAll("(?s).{" + 2 + "}(?!$)", "$0" + ",");
+            String[] parts = regla.trim().split(",");
+
+            for (String part : parts) {
+                char keyVL = part.charAt(0);
+                char keyCon = part.charAt(1);
+                String KeyVL = Character.toString(keyVL);
+                String KeyCon = Character.toString(keyCon);
+                int VL = Integer.parseInt(KeyVL);
+                int CON = Integer.parseInt(KeyCon);
+                VariableConjunto variableConjunto = new VariableConjunto(VL, CON);
+
+                arrayVariableConjuntos.add(variableConjunto);
+            }
+
+            consecuente.setLlaveVariableLiguistica(cons1);
+            consecuente.setLlaveConjunto(cons2);
+
+            objRegla.setConsecuente(consecuente);
+            objRegla.setAntecedentes(arrayVariableConjuntos);
+            arrayReglasDifusas.add(objRegla);
+
+            cont++;
+        }
+
+        m_muestraArrayReglasDifusas(arrayReglasDifusas);
+
+    }
+
+    public void m_muestraArrayReglasDifusas(ArrayList<ReglaDifusa> p_arraDifusas) {
+        String rule = "";
+        for (int i = 0; i < p_arraDifusas.size(); i++) {
+            rule="";
+            ReglaDifusa rd = p_arraDifusas.get(i);
+            System.out.println("\n--------------------------");
+            System.out.println("Llave: " + rd.getLlave());
+            rule+=rd.getLlave()+ " ";
+            VariableConjunto vc, vc2;
+            System.out.println("Antecedentes:");
+            for (int j = 0; j < rd.antecedentes.size(); j++) {
+                vc = rd.antecedentes.get(j);
+                System.out.print(vc.llaveVariableLiguistica);
+                System.out.print("" + vc.llaveConjunto + " ");
+                rule+=vc.llaveVariableLiguistica + "" + vc.llaveConjunto + " ";
+            }
+            vc2 = rd.consecuente;
+            System.out.print("\nConsecuente de la regla\n");
+            System.out.print( vc2.llaveVariableLiguistica + ""+  vc2.llaveConjunto);
+            System.out.println("\nRegla completa");
+            rule+=vc2.llaveVariableLiguistica + ""+  vc2.llaveConjunto;
+            
+            System.out.println(rule);
+        }
+
+    }
+
 }
