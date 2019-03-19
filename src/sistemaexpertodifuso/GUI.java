@@ -4,11 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.event.ChangeListener;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -21,6 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 
 public class GUI extends JFrame {
@@ -28,8 +34,9 @@ public class GUI extends JFrame {
     VariablesLinguisticas variablesLinguisticas;
     ArchivoReglas reglasDifusas;
     JTextArea messages;
-    JPanel panelHechos;
+    JPanel panelVariables, pnlSliders;
     static JLabel valor;
+    JTextField[] valores;
 
     /*
       ____ _   _ ___ 
@@ -41,16 +48,12 @@ public class GUI extends JFrame {
         this.variablesLinguisticas = variablesLinguisticas;
         this.reglasDifusas = reglasDifusas;
         Container cp = getContentPane();
-        setSize(600, 600);
+        setSize(900, 650);
         setTitle("Sistema experto difuso");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         cp.add(createMenu(cp), BorderLayout.NORTH);
-
-        panelHechos = new JPanel();
-        JScrollPane codeScrollPane = new JScrollPane(panelHechos);
-        cp.add(codeScrollPane, BorderLayout.CENTER);
 
         messages = new JTextArea("Mensajes");
         messages.setEnabled(false);
@@ -167,7 +170,7 @@ public class GUI extends JFrame {
             }
         });
         menuVariablesLinguisticas.add(menuItem);
-        
+
         //Evaluación-------------------------------------------------------------------------------------------------------------------------------------------------------------------
         menuItem = new JMenuItem("Evaluar variable lingüistica");
         menuItem.addActionListener(new ActionListener() {
@@ -190,23 +193,23 @@ public class GUI extends JFrame {
                         dialog.setVisible(true);
                         valor_de_entrada = slider.getValue();
 
-                        messages.append("\nVariable linguistica a evaluar:" + variable.nombre+"\n");
-                        messages.append("Valor de entrada:" + valor_de_entrada+"\n");
+                        messages.append("\nVariable linguistica a evaluar:" + variable.nombre + "\n");
+                        messages.append("Valor de entrada:" + valor_de_entrada + "\n");
                         messages.append("-----------------------------------------\n");
-                       
+
                         for (int i = 0; i < 8; i++) {
                             if (variable.conjuntos[i] != null) {
-                                
-                                messages.append("Nombre: " + variable.conjuntos[i].nombre+"\n");
+
+                                messages.append("Nombre: " + variable.conjuntos[i].nombre + "\n");
                                 messages.append("Puntos Criticos:\n");
                                 for (int j = 0; j < 4; j++) {
                                     if (variable.conjuntos[i].puntosCriticos[j] != null && variable.conjuntos[i].puntosCriticos[j].y != -1) {
-                                        messages.append(variable.conjuntos[i].puntosCriticos[j].x + "," + variable.conjuntos[i].puntosCriticos[j].y+"\n");
+                                        messages.append(variable.conjuntos[i].puntosCriticos[j].x + "," + variable.conjuntos[i].puntosCriticos[j].y + "\n");
                                     }
                                 }
-                                 messages.append("Grado de membresia: " + variable.conjuntos[i].evaluar((double)(valor_de_entrada)).valor +"\n"); 
-                                 messages.append("\n");
-                                 messages.append("------------------------------------------------------\n");
+                                messages.append("Grado de membresia: " + variable.conjuntos[i].evaluar((double) (valor_de_entrada)).valor + "\n");
+                                messages.append("\n");
+                                messages.append("------------------------------------------------------\n");
                             }
                         }
                     } else {
@@ -218,19 +221,96 @@ public class GUI extends JFrame {
             }
         });
         menuFuzzy.add(menuItem);
-        
-        //Reglas difusas-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        menuItem = new JMenuItem("Nueva regla difusa");
+
+        menuItem = new JMenuItem("Difizificar todas");
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                //Obtener datos de las variables linguisticas
+                VariableLinguistica variables[] = null;
+                int num_var, llave;
+                String nombre = "";
+                JButton btnDifuzificar;
+                try {
+                    variables = variablesLinguisticas.recuperarSecuencial();
+                } catch (IOException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                num_var = variables.length;
+
+                for (int i = 0; i < variables.length; i++) {
+                    System.out.println(variables[i].obtenLLaveVariable());
+                    System.out.println(variables[i].obtenNombreVar());
+
+                }
+
+                JLabel[] llaves = new JLabel[num_var];
+                JLabel[] nombres = new JLabel[num_var];
+                JSlider[] sliders = new JSlider[num_var];
+
+                valores = new JTextField[num_var];
+
+                Map<JSlider, JTextField> fieldMap;
+//...
+                fieldMap = new HashMap<>();
+
+                JPanel pnlVarLin = new JPanel(new GridLayout(num_var, 4));
+
+                for (int i = 0; i <= variables.length - 1; i++) {//ciclo para crear, añadir, establecer propiedades a los botones
+                    llaves[i] = new JLabel("" + variables[i].obtenLLaveVariable());
+                    nombres[i] = new JLabel(variables[i].obtenNombreVar());
+
+                    sliders[i] = new JSlider(0, 100);
+                    sliders[i].setMajorTickSpacing(10);
+                    sliders[i].setPaintTicks(true);
+                    sliders[i].setPaintLabels(true);
+
+                    valores[i] = new JTextField("50");
+                    fieldMap.put(sliders[i], valores[i]);
+                    sliders[i].addChangeListener(new ChangeListener() {
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                            JSlider slider = (JSlider) e.getSource();
+                            JTextField field = fieldMap.get(slider);
+                            field.setText(Integer.toString(slider.getValue()));
+                        }
+                    });
+
+                    pnlVarLin.add(llaves[i]);
+                    pnlVarLin.add(nombres[i]);
+                    pnlVarLin.add(sliders[i]);
+                    pnlVarLin.add(valores[i]);
+
+                }
+                Container cp = getContentPane();
+
+                panelVariables = new JPanel();
+                JScrollPane codeScrollPane = new JScrollPane(pnlVarLin);
+
+                
+
+                cp.add(codeScrollPane, BorderLayout.CENTER);
+               
+
+            }
+        }
+        );
+        menuFuzzy.add(menuItem);
+
+        //Reglas difusas-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        menuItem = new JMenuItem("Nueva regla difusa");
+
+        menuItem.addActionListener(
+                new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae
+            ) {
                 int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la nueva regla difusa", JOptionPane.INPUT_VALUE_PROPERTY));
                 ReglaDifusa regla;
                 try {
-                    if(reglasDifusas.existe(llave)){
+                    if (reglasDifusas.existe(llave)) {
                         JOptionPane.showMessageDialog(cp, "Ya existe una regla difusa con esa llave.");
-                    }
-                    else{
+                    } else {
                         regla = new ReglaDifusa(llave);
                         new FormularioReglasDifusas(regla, reglasDifusas, false);
                     }
@@ -238,55 +318,63 @@ public class GUI extends JFrame {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        });
+        }
+        );
         menuReglas.add(menuItem);
-        
-        
+
         menuItem = new JMenuItem("Editar reglas difusas");
-        menuItem.addActionListener(new ActionListener() {
+
+        menuItem.addActionListener(
+                new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void actionPerformed(ActionEvent ae
+            ) {
                 int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la regla difusa a editar", JOptionPane.INPUT_VALUE_PROPERTY));
                 ReglaDifusa regla;
                 try {
-                    if(!reglasDifusas.existe(llave)){
+                    if (!reglasDifusas.existe(llave)) {
                         JOptionPane.showMessageDialog(cp, "No existe una regla difusa con esa llave.");
-                    }
-                    else{
+                    } else {
                         System.out.println("Aqui se edita la regla ");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        });
+        }
+        );
         menuReglas.add(menuItem);
-        
 
         menuItem = new JMenuItem("Borrar regla difusa");
-        menuItem.addActionListener(new ActionListener() {
+
+        menuItem.addActionListener(
+                new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae) {
-              int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la regla difusa a eliminar", JOptionPane.INPUT_VALUE_PROPERTY));
+            public void actionPerformed(ActionEvent ae
+            ) {
+                int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la regla difusa a eliminar", JOptionPane.INPUT_VALUE_PROPERTY));
                 ReglaDifusa regla;
                 try {
-                    if(!reglasDifusas.existe(llave)){
+                    if (!reglasDifusas.existe(llave)) {
                         JOptionPane.showMessageDialog(cp, "No existe una regla difusa con esa llave.");
-                    }
-                    else{
+                    } else {
                         System.out.println("Aqui se borra la regla ");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        });
+        }
+        );
         menuReglas.add(menuItem);
-        
+
         menuItem = new JMenuItem("Listar reglas difusas");
-        menuItem.addActionListener(new ActionListener() {
+
+        menuItem.addActionListener(
+                new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void actionPerformed(ActionEvent ae
+            ) {
                 try {
                     messages.append("\n--------------------------------\n");
                     messages.append(reglasDifusas.muestra_reglasDifusas());
@@ -294,9 +382,10 @@ public class GUI extends JFrame {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        });
+        }
+        );
         menuReglas.add(menuItem);
-      
+
         return menuBar;
     }
 

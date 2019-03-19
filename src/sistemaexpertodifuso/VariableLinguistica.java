@@ -28,4 +28,17 @@ class VariableLinguistica {
         }
         return variable;
     }
+    
+    
+    
+    
+    public int obtenLLaveVariable(){
+        return this.llave;
+    }
+    
+    public String obtenNombreVar(){
+        return this.nombre;
+    }
+    
+    
 }
