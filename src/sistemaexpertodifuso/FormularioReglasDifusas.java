@@ -74,7 +74,7 @@ public class FormularioReglasDifusas extends JDialog{
         panelBotones.add(eliminaAntecedente);
         if(!actualiza){
             JButton agregaRegla;
-            agregaRegla = new JButton("Agrega regla");
+            agregaRegla = new JButton("Agregar regla");
             agregaRegla.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ae){
@@ -89,8 +89,27 @@ public class FormularioReglasDifusas extends JDialog{
             });
             panelBotones.add(agregaRegla);
         }
+        else{
+            JButton agregaRegla;
+            agregaRegla = new JButton("Actualizar regla");
+            agregaRegla.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae){
+                    try {
+                        reglasDifusas.elimina(regla.llave);
+                        llenaRegla();
+                        reglasDifusas.insertar(regla);
+                        dispose();
+                    } catch (IOException ex) {
+                        Logger.getLogger(FormularioReglasDifusas.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+            panelBotones.add(agregaRegla);
+        }
     }
     private void crearPanelRegla(){
+        int i;
         panelRegla.setLayout(new BorderLayout());
         panelAntecedentes = new JPanel();
         panelRegla.add(panelAntecedentes, BorderLayout.CENTER);
@@ -110,6 +129,17 @@ public class FormularioReglasDifusas extends JDialog{
         panelConsecuente.add(new JLabel(")"));
         if(!actualiza){
             creaAntecedente(true);
+        }
+        else{
+            for(i = 0; i < regla.antecedentes.size(); i++){
+                creaAntecedente(true);
+            }
+            for(i = 0; i < regla.antecedentes.size(); i++){
+                inputsVariables.get(i).setText(regla.antecedentes.get(i).llaveVariableLiguistica+"");
+                inputsConjuntos.get(i).setText(regla.antecedentes.get(i).llaveConjunto+"");
+            }
+            inputVariableConsecuente.setText(regla.consecuente.llaveVariableLiguistica+"");
+            inputConjuntoConsecuente.setText(regla.consecuente.llaveConjunto+"");
         }
     }
     

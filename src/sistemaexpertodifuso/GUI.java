@@ -420,12 +420,18 @@ public class GUI extends JFrame {
             public void actionPerformed(ActionEvent ae
             ) {
                 int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la regla difusa a editar", JOptionPane.INPUT_VALUE_PROPERTY));
-                ReglaDifusa regla;
+                ReglaDifusa regla = null, reglas[];
                 try {
                     if (!reglasDifusas.existe(llave)) {
                         JOptionPane.showMessageDialog(cp, "No existe una regla difusa con esa llave.");
                     } else {
-                        System.out.println("Aqui se edita la regla ");
+                        reglas = reglasDifusas.recuperarTodo();
+                        for(int i = 0; i < reglas.length; i++){
+                            if(reglas[i].llave == llave){
+                                regla = reglas[i];
+                            }
+                        }
+                        new FormularioReglasDifusas(regla, reglasDifusas, true);
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
