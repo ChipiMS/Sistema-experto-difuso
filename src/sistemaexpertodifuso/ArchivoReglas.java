@@ -282,4 +282,31 @@ public class ArchivoReglas {
         return respuesta;
     }
 
+    void elimina(int llave) throws IOException {
+        boolean ultimoEraVacio = true, eliminado = false;
+        long ultimo;
+        int actual;
+        RandomAccessFile lector = null;
+        lector = new RandomAccessFile("reglasDifusas", "rw");
+        while(!eliminado){
+            ultimo = lector.getFilePointer();
+            actual = lector.readInt();
+            if(ultimoEraVacio && actual == llave){
+                while(actual != -1){
+                    lector.seek(ultimo);
+                    lector.writeInt(-1);
+                    ultimo = lector.getFilePointer();
+                    actual = lector.readInt();
+                }
+                eliminado = true;
+            }
+            if(actual == -1){
+                ultimoEraVacio = true;
+            }
+            else {
+                ultimoEraVacio = false;
+            }
+        }
+        lector.close();
+    }
 }

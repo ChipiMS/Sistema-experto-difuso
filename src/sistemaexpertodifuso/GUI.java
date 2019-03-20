@@ -448,7 +448,7 @@ public class GUI extends JFrame {
                     if (!reglasDifusas.existe(llave)) {
                         JOptionPane.showMessageDialog(cp, "No existe una regla difusa con esa llave.");
                     } else {
-                        System.out.println("Aqui se borra la regla ");
+                        reglasDifusas.elimina(llave);
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
