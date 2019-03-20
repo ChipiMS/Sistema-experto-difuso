@@ -375,17 +375,20 @@ public class GUI extends JFrame {
 
                                 }
                             }
-
+                            
                             ArchivoReglas archivo = new ArchivoReglas();
                             List<ResultadoDifuso> resultados = MaxMin.procesar(Arrays.asList(archivo.recuperarTodo()), arrayResultadosDifusos);
-
+                            
                             for (ResultadoDifuso resultadoDifuso : resultados) {
                                 messages.append("Difusificación: Llave variable linguistica: " + resultadoDifuso.variableConjunto.llaveVariableLiguistica + "\n");
                                 messages.append("Difusificación: Llave del conjunto: " + resultadoDifuso.variableConjunto.llaveConjunto + "\n");
                                 messages.append("Difusificación: Resultado difuso: " + resultadoDifuso.valor + "\n\n");
                             }
-
-                            m_muestraResultadosDifusos(arrayResultadosDifusos);
+                            Centroide centroide = new Centroide(variablesLinguisticas);
+                            messages.append("Resultado:"+centroide.procesar(resultados));
+                            //m_muestraResultadosDifusos(arrayResultadosDifusos);
+                            
+                            
 
                         } catch (IOException ex) {
                             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);

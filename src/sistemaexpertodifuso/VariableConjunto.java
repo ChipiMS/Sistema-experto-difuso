@@ -1,5 +1,7 @@
 package sistemaexpertodifuso;
 
+import java.io.IOException;
+
 public class VariableConjunto {
     int llaveVariableLiguistica, llaveConjunto;
     Conjunto conjunto;
@@ -32,13 +34,10 @@ public class VariableConjunto {
     	return llaveVariableLiguistica + "," + llaveConjunto;
     }
     
-    public Conjunto getConjunto() {
-    	if (conjunto == null) {
-    		conjunto = new Conjunto();
-    		conjunto.variableConjunto = this;
-    		
+    public Conjunto getConjunto(VariablesLinguisticas variablesLinguisticas) throws IOException {
+    	if(conjunto == null){
+            conjunto = variablesLinguisticas.recuperarAleatorio(llaveVariableLiguistica).conjuntos[llaveConjunto];
     	}
-    	
     	return conjunto; 
     }
 }
