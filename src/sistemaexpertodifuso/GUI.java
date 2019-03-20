@@ -114,7 +114,15 @@ public class GUI extends JFrame {
                 } else {
                     reglas = "Hubo un error al recuperar las variables lingüisticas.";
                 }
-                JOptionPane.showMessageDialog(cp, reglas);
+                JTextArea textArea = new JTextArea(reglas);
+                JScrollPane scrollPane = new JScrollPane(textArea);
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                scrollPane.setPreferredSize(new Dimension(500, 500));
+                JOptionPane.showMessageDialog(null, scrollPane, "Variables Linguisticas",
+                        JOptionPane.YES_NO_OPTION);
+
+                //JOptionPane.showMessageDialog(cp, reglas);
             }
         });
         menuVariablesLinguisticas.add(menuItem);
@@ -258,6 +266,7 @@ public class GUI extends JFrame {
                 //arrayResultadosDifusos = new ArrayList<>();
                 //Obtener datos de las variables linguisticas
                 VariableLinguistica variables[] = null;
+                VariablesLinguisticas var = null;
                 int num_var;
                 JButton btnDifuzificar = null;
                 try {
@@ -268,6 +277,7 @@ public class GUI extends JFrame {
                 num_var = variables.length;
 
                 for (int i = 0; i < variables.length; i++) {
+
                     System.out.println(variables[i].obtenLLaveVariable());
                     System.out.println(variables[i].obtenNombreVar());
 
@@ -304,10 +314,14 @@ public class GUI extends JFrame {
                         }
                     });
 
-                    pnlVarLin.add(llaves[i]);
-                    pnlVarLin.add(nombres[i]);
-                    pnlVarLin.add(sliders[i]);
-                    pnlVarLin.add(valores[i]);
+                    if (Integer.parseInt(llaves[i].getText()) == variableLinguisticaResultado) {
+
+                    } else {
+                        pnlVarLin.add(llaves[i]);
+                        pnlVarLin.add(nombres[i]);
+                        pnlVarLin.add(sliders[i]);
+                        pnlVarLin.add(valores[i]);
+                    }
 
                 }
                 Container cp = getContentPane();
@@ -353,7 +367,7 @@ public class GUI extends JFrame {
                                         objResultadoDifuso.variableConjunto = new VariableConjunto(variable.llave, j);
 
                                         arrayResultadosDifusos.add(objResultadoDifuso);
-                                        
+
                                         messages.append("Grado de membresia: " + variable.conjuntos[j].evaluar((double) (valor_entrada)).valor + "\n");
                                         messages.append("\n");
                                         messages.append("------------------------------------------------------\n");
@@ -361,19 +375,17 @@ public class GUI extends JFrame {
 
                                 }
                             }
-                            
+
                             ArchivoReglas archivo = new ArchivoReglas();
-                			List<ResultadoDifuso> resultados = MaxMin.procesar(Arrays.asList(archivo.recuperarTodo()), arrayResultadosDifusos);
-                			
-                			for (ResultadoDifuso resultadoDifuso : resultados) {
-                	            messages.append("Difusificación: Llave variable linguistica: " + resultadoDifuso.variableConjunto.llaveVariableLiguistica + "\n");
-                	            messages.append("Difusificación: Llave del conjunto: " + resultadoDifuso.variableConjunto.llaveConjunto + "\n");
-                	            messages.append("Difusificación: Resultado difuso: " + resultadoDifuso.valor + "\n\n");
-                			}
-                			
+                            List<ResultadoDifuso> resultados = MaxMin.procesar(Arrays.asList(archivo.recuperarTodo()), arrayResultadosDifusos);
+
+                            for (ResultadoDifuso resultadoDifuso : resultados) {
+                                messages.append("Difusificación: Llave variable linguistica: " + resultadoDifuso.variableConjunto.llaveVariableLiguistica + "\n");
+                                messages.append("Difusificación: Llave del conjunto: " + resultadoDifuso.variableConjunto.llaveConjunto + "\n");
+                                messages.append("Difusificación: Resultado difuso: " + resultadoDifuso.valor + "\n\n");
+                            }
+
                             m_muestraResultadosDifusos(arrayResultadosDifusos);
-                            
-                            
 
                         } catch (IOException ex) {
                             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -513,24 +525,24 @@ public class GUI extends JFrame {
             //System.out.println(p_array.get(i).variableConjunto);
 
         }
-        
+
         ArchivoReglas archivo = new ArchivoReglas();
-        
+
         try {
-			List<ResultadoDifuso> resultados = MaxMin.procesar(Arrays.asList(archivo.recuperarTodo()), p_array);
-			
-			for (ResultadoDifuso resultadoDifuso : resultados) {
-	            System.out.println("Difusificación: Llave variable linguistica: " + resultadoDifuso.variableConjunto.llaveVariableLiguistica);
-	            System.out.println("Difusificación: Llave del conjunto: " + resultadoDifuso.variableConjunto.llaveConjunto);
-	            System.out.println("Difusificación: Resultado difuso: " + resultadoDifuso.valor);
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            List<ResultadoDifuso> resultados = MaxMin.procesar(Arrays.asList(archivo.recuperarTodo()), p_array);
+
+            for (ResultadoDifuso resultadoDifuso : resultados) {
+                System.out.println("Difusificación: Llave variable linguistica: " + resultadoDifuso.variableConjunto.llaveVariableLiguistica);
+                System.out.println("Difusificación: Llave del conjunto: " + resultadoDifuso.variableConjunto.llaveConjunto);
+                System.out.println("Difusificación: Resultado difuso: " + resultadoDifuso.valor);
+            }
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private void recuperaVariableLinguisticaResultado(Container cp) throws IOException {
