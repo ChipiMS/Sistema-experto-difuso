@@ -37,12 +37,12 @@ public class GUI extends JFrame {
     ArchivoReglas reglasDifusas;
     JTextArea messages;
     JPanel panelVariables, pnlSliders;
-    static JLabel valor;
+    static JLabel valors;
     JTextField[] valores;
     JLabel[] llaves;
     JLabel[] nombres;
     JSlider[] sliders;
-    ArrayList<ResultadoDifuso> arrayResultadosDifusos;
+    ArrayList<ResultadoDifuso> arrayResultadosDifusos = new ArrayList<>();
     int variableLinguisticaResultado;
 
     /*
@@ -178,9 +178,7 @@ public class GUI extends JFrame {
             }
         });
         menuVariablesLinguisticas.add(menuItem);
-        
-        
-        
+
         menuItem = new JMenuItem("Especificar VL del resultado");
         menuItem.addActionListener(new ActionListener() {
             @Override
@@ -207,7 +205,7 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    valor = new JLabel("");
+                    valors = new JLabel("");
                     int valor_de_entrada = 0;
                     int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable linguistica a evaluar:", JOptionPane.INPUT_VALUE_PROPERTY));
                     VariableLinguistica variable = variablesLinguisticas.recuperarAleatorio(llave);
@@ -218,7 +216,7 @@ public class GUI extends JFrame {
                         optionPane.setMessage(new Object[]{"Ingresa el valor a evaluar:", slider});
                         optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
                         optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
-                        optionPane.add(valor);
+                        optionPane.add(valors);
                         JDialog dialog = optionPane.createDialog(cp, "Difuzificar:" + variable.nombre);
                         dialog.setVisible(true);
                         valor_de_entrada = slider.getValue();
@@ -252,11 +250,11 @@ public class GUI extends JFrame {
         });
         menuFuzzy.add(menuItem);
 
-        menuItem = new JMenuItem("Difizificar todas");
+        menuItem = new JMenuItem("Difuzificar todas");
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                arrayResultadosDifusos = new ArrayList<ResultadoDifuso>();
+                //arrayResultadosDifusos = new ArrayList<>();
                 //Obtener datos de las variables linguisticas
                 VariableLinguistica variables[] = null;
                 int num_var;
@@ -325,20 +323,21 @@ public class GUI extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        
+
                         try {
-                            
+
                             VariableLinguistica variable = null;
                             for (int i = 0; i < valores.length; i++) {
                                 variable = variablesLinguisticas.recuperarAleatorio(Integer.parseInt(llaves[i].getText()));
-                                double valor_entrada = (double)Integer.parseInt(valores[i].getText());
+                                double valor_entrada = (double) Integer.parseInt(valores[i].getText());
                                 messages.append("\nVariable linguistica a evaluar:" + variable.nombre + "\n");
+                                messages.append("Llave de la variable linguistica:" + variable.llave + "\n");
                                 messages.append("Valor de entrada:" + valor_entrada + "\n");
                                 messages.append("-----------------------------------------\n");
 
                                 for (int j = 0; j < 8; j++) {
                                     if (variable.conjuntos[j] != null) {
-                                        
+
                                         messages.append("Nombre: " + variable.conjuntos[j].nombre + "\n");
                                         messages.append("Puntos Criticos:\n");
                                         for (int k = 0; k < 4; k++) {
@@ -346,14 +345,23 @@ public class GUI extends JFrame {
                                                 messages.append(variable.conjuntos[j].puntosCriticos[k].x + "," + variable.conjuntos[j].puntosCriticos[k].y + "\n");
                                             }
                                         }
-                                       
+
+                                        ResultadoDifuso objResultadoDifuso = new ResultadoDifuso();
+                                        objResultadoDifuso = variable.conjuntos[j].evaluar((double) (valor_entrada));
+
+                                        objResultadoDifuso.variableConjunto = new VariableConjunto(variable.llave, j);
+
+                                        arrayResultadosDifusos.add(objResultadoDifuso);
+                                        
                                         messages.append("Grado de membresia: " + variable.conjuntos[j].evaluar((double) (valor_entrada)).valor + "\n");
                                         messages.append("\n");
                                         messages.append("------------------------------------------------------\n");
                                     }
 
                                 }
+
                             }
+                            m_muestraResultadosDifusos(arrayResultadosDifusos);
 
                         } catch (IOException ex) {
                             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -447,8 +455,8 @@ public class GUI extends JFrame {
             ) {
                 try {
                     messages.append("\n--------------------------------\n");
-                    messages.append("\n"+reglasDifusas.mostrarTodo());
-                    
+                    messages.append("\n" + reglasDifusas.mostrarTodo());
+
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -470,12 +478,24 @@ public class GUI extends JFrame {
                 JSlider theSlider = (JSlider) changeEvent.getSource();
                 if (!theSlider.getValueIsAdjusting()) {
                     optionPane.setInputValue(new Integer(theSlider.getValue()));
-                    valor.setText("" + theSlider.getValue());
+                    valors.setText("" + theSlider.getValue());
                 }
             }
         };
         slider.addChangeListener((javax.swing.event.ChangeListener) changeListener);
         return slider;
+    }
+
+    public void m_muestraResultadosDifusos(ArrayList<ResultadoDifuso> p_array) {
+        for (int i = 0; i < p_array.size(); i++) {
+
+            System.out.println("Llave variable linguistica: " + p_array.get(i).variableConjunto.llaveVariableLiguistica);
+            System.out.println("Llave del conjunto: " + p_array.get(i).variableConjunto.llaveConjunto);
+            System.out.println("Resultado difuso: " + p_array.get(i).valor + "\n");
+            //System.out.println(p_array.get(i).variableConjunto);
+
+        }
+       
     }
 
     private void recuperaVariableLinguisticaResultado(Container cp) throws IOException {
@@ -489,8 +509,7 @@ public class GUI extends JFrame {
         if (existeArchivo) {
             variableLinguisticaResultado = lector.readInt();
             lector.close();
-        }
-        else{
+        } else {
             escritor = new RandomAccessFile("variableResultado", "rw");
             variableLinguisticaResultado = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la variable difusa que indica el resultado", JOptionPane.INPUT_VALUE_PROPERTY));
             escritor.writeInt(variableLinguisticaResultado);

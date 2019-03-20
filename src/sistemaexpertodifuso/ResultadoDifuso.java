@@ -9,4 +9,8 @@ public class ResultadoDifuso {
 		this.valor = valor;
 		this.variableConjunto = variableConjunto;
 	}
+
+    public ResultadoDifuso() {
+       
+    }
 }
