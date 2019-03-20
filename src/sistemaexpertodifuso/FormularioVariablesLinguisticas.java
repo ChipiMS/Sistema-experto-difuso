@@ -88,6 +88,7 @@ public class FormularioVariablesLinguisticas extends JDialog{
                         if(nombreConjunto.trim().length() > 0){
                             variableLinguistica.conjuntos[i] = new Conjunto();
                             variableLinguistica.conjuntos[i].nombre = nombreConjunto;
+                            variableLinguistica.conjuntos[i].variableConjunto = new VariableConjunto(variableLinguistica.llave, i);
                             
                             for(j = 0; j < 4; j++){
                                 if(puntos[i][j][0].getText().length() > 0 && puntos[i][j][1].getText().length() > 0){

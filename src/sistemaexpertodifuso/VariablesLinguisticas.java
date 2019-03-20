@@ -78,7 +78,9 @@ public class VariablesLinguisticas{
         for(i = 0; i < 8; i++){
             if(aEscribir.conjuntos[i] == null){
                 aEscribir.conjuntos[i] = new Conjunto(true);
+                aEscribir.conjuntos[i].variableConjunto = new VariableConjunto(aEscribir.llave, i);
             }
+            
             nombre = aEscribir.conjuntos[i].nombre;
             while(nombre.length() < 20){
                 nombre += " ";
@@ -271,6 +273,7 @@ public class VariablesLinguisticas{
         
         for(i = 0; i < 8; i++){
             l.conjuntos[i] = new Conjunto();
+            l.conjuntos[i].variableConjunto = new VariableConjunto(l.llave, i);
             
             for(c = 0; c < nombreConjunto.length; c++){
                 nombreConjunto[c] = lector.readChar();
