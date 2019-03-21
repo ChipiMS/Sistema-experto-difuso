@@ -386,6 +386,9 @@ public class GUI extends JFrame {
                             }
 
                             m_muestraResultadosDifusos(arrayResultadosDifusos);
+                            Centroide centroide = new Centroide(variablesLinguisticas);
+                            messages.append("Resultado:"+centroide.procesar(resultados));
+                            //m_muestraResultadosDifusos(arrayResultadosDifusos);
 
                         } catch (IOException ex) {
                             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
