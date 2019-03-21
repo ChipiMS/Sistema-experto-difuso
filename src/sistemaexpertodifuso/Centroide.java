@@ -32,7 +32,7 @@ public class Centroide {
 
         for (ResultadoDifuso resultado: resultados) {
             ResultadoDifuso conjuntoResultado = resultado.variableConjunto.getConjunto(variablesLinguisticas).evaluar(valor);
-            Double valorConjunto = Math.min(resultado.valor, conjuntoResultado.valor);
+            Double valorConjunto = resultado.valor*conjuntoResultado.valor;
             
             maximo = Math.max(maximo, valorConjunto);
         }
