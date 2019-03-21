@@ -417,7 +417,7 @@ public class GUI extends JFrame {
                         JOptionPane.showMessageDialog(cp, "Ya existe una regla difusa con esa llave.");
                     } else {
                         regla = new ReglaDifusa(llave);
-                        new FormularioReglasDifusas(regla, reglasDifusas, false);
+                        new FormularioReglasDifusas(regla, reglasDifusas, false, variablesLinguisticas);
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -446,7 +446,7 @@ public class GUI extends JFrame {
                                 regla = reglas[i];
                             }
                         }
-                        new FormularioReglasDifusas(regla, reglasDifusas, true);
+                        new FormularioReglasDifusas(regla, reglasDifusas, true, variablesLinguisticas);
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);

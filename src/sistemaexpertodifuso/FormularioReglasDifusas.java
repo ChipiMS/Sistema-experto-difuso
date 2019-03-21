@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 
 public class FormularioReglasDifusas extends JDialog{
     ArchivoReglas reglasDifusas;
+    VariablesLinguisticas variablesLinguisticas;
     ReglaDifusa regla;
     JPanel panelRegla, panelBotones, panelAntecedentes, panelConsecuente;
     boolean actualiza;
@@ -108,7 +109,7 @@ public class FormularioReglasDifusas extends JDialog{
             panelBotones.add(agregaRegla);
         }
     }
-    private void crearPanelRegla(){
+    private void crearPanelRegla() throws IOException{
         int i;
         panelRegla.setLayout(new BorderLayout());
         panelAntecedentes = new JPanel();
@@ -128,7 +129,9 @@ public class FormularioReglasDifusas extends JDialog{
         panelConsecuente.add(text);
         panelConsecuente.add(new JLabel(")"));
         if(!actualiza){
-            creaAntecedente(true);
+            for(i = 0; i < variablesLinguisticas.recuperarSecuencial().length-1; i++){
+                creaAntecedente(true);
+            }
         }
         else{
             for(i = 0; i < regla.antecedentes.size(); i++){
@@ -151,10 +154,11 @@ public class FormularioReglasDifusas extends JDialog{
         regla.consecuente = new VariableConjunto(Integer.parseInt(inputVariableConsecuente.getText()), Integer.parseInt(inputConjuntoConsecuente.getText()));
     }
     
-    public FormularioReglasDifusas(ReglaDifusa regla, ArchivoReglas reglasDifusas, boolean actualiza){
+    public FormularioReglasDifusas(ReglaDifusa regla, ArchivoReglas reglasDifusas, boolean actualiza, VariablesLinguisticas variablesLinguisticas) throws IOException{
         this.reglasDifusas = reglasDifusas;
         this.actualiza = actualiza;
         this.regla = regla;
+        this.variablesLinguisticas = variablesLinguisticas;
         inputsVariables = new ArrayList<>();
         inputsConjuntos = new ArrayList<>();
         panelesAntecedentes = new ArrayList<>();
