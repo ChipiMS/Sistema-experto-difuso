@@ -88,7 +88,7 @@ public class GUI extends JFrame {
         JMenuItem menuItem;
         menuBar = new JMenuBar();
         menuVariablesLinguisticas = new JMenu("Variables lingüisticas");
-        menuFuzzy = new JMenu("Difuzificar");
+        menuFuzzy = new JMenu("Inferencia Difusa");
         menuReglas = new JMenu("Reglas difusas");
         menuBar.add(menuVariablesLinguisticas);
         menuBar.add(menuFuzzy);
@@ -259,7 +259,7 @@ public class GUI extends JFrame {
         });
         menuFuzzy.add(menuItem);
 
-        menuItem = new JMenuItem("Difuzificar todas");
+        menuItem = new JMenuItem("Inferir");
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -325,7 +325,7 @@ public class GUI extends JFrame {
 
                 }
                 Container cp = getContentPane();
-                btnDifuzificar = new JButton("Difuzificar");
+                btnDifuzificar = new JButton("Inferir");
 
                 panelVariables = new JPanel();
                 JScrollPane codeScrollPane = new JScrollPane(pnlVarLin);
@@ -375,20 +375,17 @@ public class GUI extends JFrame {
 
                                 }
                             }
-                            
+
                             ArchivoReglas archivo = new ArchivoReglas();
                             List<ResultadoDifuso> resultados = MaxMin.procesar(Arrays.asList(archivo.recuperarTodo()), arrayResultadosDifusos);
-                            
+
                             for (ResultadoDifuso resultadoDifuso : resultados) {
                                 messages.append("Difusificación: Llave variable linguistica: " + resultadoDifuso.variableConjunto.llaveVariableLiguistica + "\n");
                                 messages.append("Difusificación: Llave del conjunto: " + resultadoDifuso.variableConjunto.llaveConjunto + "\n");
                                 messages.append("Difusificación: Resultado difuso: " + resultadoDifuso.valor + "\n\n");
                             }
-                            Centroide centroide = new Centroide(variablesLinguisticas);
-                            messages.append("Resultado:"+centroide.procesar(resultados));
-                            //m_muestraResultadosDifusos(arrayResultadosDifusos);
-                            
-                            
+
+                            m_muestraResultadosDifusos(arrayResultadosDifusos);
 
                         } catch (IOException ex) {
                             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
