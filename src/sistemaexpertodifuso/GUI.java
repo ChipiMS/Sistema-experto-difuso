@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.event.ChangeListener;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -458,11 +460,9 @@ public class GUI extends JFrame {
 
         menuItem = new JMenuItem("Borrar regla difusa");
 
-        menuItem.addActionListener(
-                new ActionListener() {
+        menuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae
-            ) {
+            public void actionPerformed(ActionEvent ae) {
                 int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Llave de la regla difusa a eliminar", JOptionPane.INPUT_VALUE_PROPERTY));
                 ReglaDifusa regla;
                 try {
@@ -475,8 +475,7 @@ public class GUI extends JFrame {
                     Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }
-        );
+        });
         menuReglas.add(menuItem);
 
         menuItem = new JMenuItem("Listar reglas difusas");
@@ -496,6 +495,33 @@ public class GUI extends JFrame {
             }
         }
         );
+        menuReglas.add(menuItem);
+        
+        menuItem = new JMenuItem("Importar CSV");
+
+        menuItem.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae){
+                int result;
+                File file, workingDirectory;
+                JFileChooser chooser = new JFileChooser();
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                workingDirectory = new File(System.getProperty("user.dir"));
+                chooser.setCurrentDirectory(workingDirectory);
+                result = chooser.showOpenDialog(cp);
+                int llave = Integer.parseInt(JOptionPane.showInputDialog(cp, "Primera llave consecutiva", JOptionPane.INPUT_VALUE_PROPERTY));
+                if(result == 0){
+                    try {
+                        file = chooser.getSelectedFile();
+                        reglasDifusas.importar(file, llave);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
         menuReglas.add(menuItem);
 
         return menuBar;

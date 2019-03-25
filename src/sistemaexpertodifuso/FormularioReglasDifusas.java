@@ -163,7 +163,7 @@ public class FormularioReglasDifusas extends JDialog{
         inputsConjuntos = new ArrayList<>();
         panelesAntecedentes = new ArrayList<>();
         Container cp = getContentPane();
-        setSize(600, 600);
+        setSize(1350, 600);
         setTitle("Regla difusa "+regla.llave);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());

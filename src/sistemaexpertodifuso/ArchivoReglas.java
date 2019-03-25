@@ -1,9 +1,11 @@
 package sistemaexpertodifuso;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 
@@ -308,5 +310,23 @@ public class ArchivoReglas {
             }
         }
         lector.close();
+    }
+
+    void importar(File file, int llave) throws FileNotFoundException, IOException {
+        Scanner sc;
+        int i;
+        String[] elementos = null;
+        ReglaDifusa regla;
+        sc = new Scanner(file, "UTF-8");
+        while(sc.hasNext()){
+            elementos = sc.nextLine().split(",");
+            regla = new ReglaDifusa(llave);
+            llave++;
+            for(i = 1; i < elementos.length; i++){
+                regla.antecedentes.add(new VariableConjunto(i, Integer.parseInt(elementos[i-1])));
+            }
+            regla.consecuente = new VariableConjunto(i, Integer.parseInt(elementos[i-1]));
+            insertar(regla);
+        }
     }
 }
